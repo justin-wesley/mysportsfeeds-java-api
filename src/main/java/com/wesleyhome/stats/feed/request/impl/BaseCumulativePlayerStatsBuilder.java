@@ -1,25 +1,21 @@
 package com.wesleyhome.stats.feed.request.impl;
 
-import static java.util.stream.Collectors.toList;
-
 import com.wesleyhome.stats.feed.request.api.ApiCredentials;
 import com.wesleyhome.stats.feed.request.api.ApiRequest;
-import com.wesleyhome.stats.feed.request.api.DateBuilder;
-import com.wesleyhome.stats.feed.request.api.DateConverter;
-import com.wesleyhome.stats.feed.request.api.GameStatus;
 import com.wesleyhome.stats.feed.request.api.LeagueType;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseFullGameScheduleBuilder<B extends BaseFullGameScheduleBuilder<B>> extends
-    RequestBuilder implements DateBuilder<B> {
+public abstract class BaseCumulativePlayerStatsBuilder<B extends BaseCumulativePlayerStatsBuilder<B>> extends
+    RequestBuilder {
 
   protected ApiCredentials credentials;
   protected Integer season;
   protected LeagueType leagueType;
   protected List<String> teams = new ArrayList<>();
-  protected DateConverter date;
-  protected List<GameStatus> statuses = new ArrayList<>();
+  protected List<String> players = new ArrayList<>();
+  protected List<String> positions = new ArrayList<>();
+  protected List<String> countries = new ArrayList<>();
   protected String sort;
   protected Integer offset;
   protected Integer limit;
@@ -27,7 +23,7 @@ public abstract class BaseFullGameScheduleBuilder<B extends BaseFullGameSchedule
   private final B SELF;
 
   @SuppressWarnings("unchecked")
-  protected BaseFullGameScheduleBuilder() {
+  protected BaseCumulativePlayerStatsBuilder() {
     //noinspection unchecked
     SELF = (B) this;
   }
@@ -58,13 +54,33 @@ public abstract class BaseFullGameScheduleBuilder<B extends BaseFullGameSchedule
     return SELF;
   }
 
-  public B date(DateConverter date) {
-    this.date = date;
+  public B players(List<String> players) {
+    this.players = players == null ? new ArrayList<>() : players;
     return SELF;
   }
 
-  public B statuses(List<GameStatus> statuses) {
-    this.statuses = statuses;
+  public B player(String player) {
+    this.players.add(player);
+    return SELF;
+  }
+
+  public B positions(List<String> positions) {
+    this.positions = positions == null ? new ArrayList<>() : positions;
+    return SELF;
+  }
+
+  public B position(String position) {
+    this.positions.add(position);
+    return SELF;
+  }
+
+  public B countries(List<String> countries) {
+    this.countries = countries == null ? new ArrayList<>() : countries;
+    return SELF;
+  }
+
+  public B country(String country) {
+    this.countries.add(country);
     return SELF;
   }
 
@@ -100,9 +116,9 @@ public abstract class BaseFullGameScheduleBuilder<B extends BaseFullGameSchedule
       request = createRequest(credentials, season, leagueType, responseType);
     }
     applyListParameters(request, teams, "team");
-    applyListParameters(request, statuses.stream().map(GameStatus::toString).collect(toList()),
-        "status");
-    applyParameter(request, "date", date::convert);
+    applyListParameters(request, countries, "countries");
+    applyListParameters(request, positions, "positions");
+    applyListParameters(request, players, "players");
     applyParameter(request, "sort", sort);
     applyParameter(request, "offset", offset);
     applyParameter(request, "limit", limit);

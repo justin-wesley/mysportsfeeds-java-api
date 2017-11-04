@@ -8,18 +8,12 @@ import com.wesleyhome.stats.feed.request.impl.DefaultApiRequest;
 
 @SuppressWarnings("unchecked")
 public final class NflFullGameScheduleBuilder extends
-    BaseFullGameScheduleBuilder<NflFullGameScheduleBuilder, NflFullGameSchedule> implements
+    BaseFullGameScheduleBuilder<NflFullGameScheduleBuilder> implements
     DateBuilder<NflFullGameScheduleBuilder> {
 
 
   public static NflFullGameScheduleBuilder fullGameSchedule() {
     return new NflFullGameScheduleBuilder();
-  }
-
-  @Override
-  protected NflFullGameSchedule build() {
-    return new NflFullGameSchedule(credentials, season, leagueType, teams, date, statuses, sort,
-        offset, limit, force);
   }
 
   @Override

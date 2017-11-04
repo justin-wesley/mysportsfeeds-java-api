@@ -8,7 +8,7 @@ import com.wesleyhome.stats.feed.request.impl.DefaultApiRequest;
 
 @SuppressWarnings("unchecked")
 public final class NhlFullGameScheduleBuilder extends
-    BaseFullGameScheduleBuilder<NhlFullGameScheduleBuilder, NhlFullGameSchedule> implements
+    BaseFullGameScheduleBuilder<NhlFullGameScheduleBuilder> implements
     DateBuilder<NhlFullGameScheduleBuilder> {
 
 
@@ -16,11 +16,6 @@ public final class NhlFullGameScheduleBuilder extends
     return new NhlFullGameScheduleBuilder();
   }
 
-  @Override
-  protected NhlFullGameSchedule build() {
-    return new NhlFullGameSchedule(credentials, season, leagueType, teams, date, statuses, sort,
-        offset, limit, force);
-  }
 
   @Override
   protected <R> DefaultApiRequest<R> createRequest(ApiCredentials credentials, Integer season,
