@@ -1,19 +1,16 @@
 package com.wesleyhome.stats.feed.request.impl.nhl;
 
 import com.wesleyhome.stats.feed.request.api.ApiCredentials;
-import com.wesleyhome.stats.feed.request.impl.nhl.NhlFullGameSchedule.NhlFullGameScheduleBuilder;
+import com.wesleyhome.stats.feed.request.impl.BaseApi;
 
-public final class NhlApi {
+public final class NhlApi extends BaseApi {
 
-    private ApiCredentials credentials;
 
-    public NhlApi (ApiCredentials credentials){
-        this.credentials = credentials;
-    }
+  public NhlApi(ApiCredentials credentials) {
+    super(credentials);
+  }
 
-    private NhlApi(){}
-
-    public NhlFullGameScheduleBuilder fullGameSchedule(){
-        return NhlFullGameSchedule.builder().credentials(credentials);
-    }
+  NhlFullGameScheduleBuilder fullGameSchedule() {
+    return NhlFullGameScheduleBuilder.fullGameSchedule().credentials(getCredentials());
+  }
 }

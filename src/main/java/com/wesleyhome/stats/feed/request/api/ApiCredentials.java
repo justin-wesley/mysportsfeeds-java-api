@@ -2,7 +2,7 @@ package com.wesleyhome.stats.feed.request.api;
 
 public interface ApiCredentials {
 
-    String getUsername();
+  String getUsername();
 
-    String getPassword();
+  String getPassword();
 }
