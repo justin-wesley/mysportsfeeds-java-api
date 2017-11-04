@@ -7,12 +7,12 @@ import com.wesleyhome.stats.feed.request.impl.DefaultApiRequest;
 
 class NhlFullGameScheduleRequest<R> extends DefaultApiRequest<R> {
 
-  NhlFullGameScheduleRequest(ApiCredentials credentials, Class<R> responseType) {
-    this(credentials, null, null, responseType);
-  }
+    NhlFullGameScheduleRequest(ApiCredentials credentials, Class<R> responseType) {
+        this(credentials, null, null, responseType);
+    }
 
-  NhlFullGameScheduleRequest(ApiCredentials credentials, Integer startYear, LeagueType leagueType,
-      Class<R> responseType) {
-    super(credentials, "full_game_schedule", LeagueEnum.NHL, startYear, leagueType, responseType);
-  }
+    NhlFullGameScheduleRequest(ApiCredentials credentials, Integer startYear, LeagueType leagueType,
+                               Class<R> responseType) {
+        super(credentials, "full_game_schedule", LeagueEnum.NHL, startYear, leagueType, responseType);
+    }
 }

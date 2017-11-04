@@ -8,30 +8,25 @@ import com.wesleyhome.stats.feed.request.impl.DefaultApiRequestTest;
 
 import static com.wesleyhome.stats.feed.MySportsFeedAPI.nhl;
 import static com.wesleyhome.stats.feed.request.api.LeagueType.REGULAR;
-import static com.wesleyhome.stats.feed.request.api.SemanticDate.TOMORROW;
-import static com.wesleyhome.stats.feed.request.api.SemanticDate.YESTERDAY;
 import static com.wesleyhome.stats.feed.request.impl.JsonNodeAssert.assertThat;
 
-class NhlFullGameScheduleRequestTest extends DefaultApiRequestTest {
+class NhlCumulativePlayerStatsRequestTest extends DefaultApiRequestTest {
 
     @Override
     protected ApiRequest<JsonNode> getRequest(ApiCredentials credentials) {
         return nhl(credentials)
-                .fullGameSchedule()
+                .cumulativePlayerStatesBuilder()
                 .season(2017)
                 .leagueType(REGULAR)
-                .between(YESTERDAY, TOMORROW)
-                .team("min") // Go WILD!!!
+                .team("min")
                 .buildRequest(JsonNode.class);
     }
 
     @Override
     protected void assertResponse(JsonNode response) {
         assertThat(response)
-                .child("fullgameschedule")
+                .child("cumulativeplayerstats")
                 .child("lastUpdatedOn")
                 .isNodeType(JsonNodeType.STRING);
     }
-
-
 }

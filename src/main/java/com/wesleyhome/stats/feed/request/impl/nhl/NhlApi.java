@@ -6,11 +6,15 @@ import com.wesleyhome.stats.feed.request.impl.BaseApi;
 public final class NhlApi extends BaseApi {
 
 
-  public NhlApi(ApiCredentials credentials) {
-    super(credentials);
-  }
+    public NhlApi(ApiCredentials credentials) {
+        super(credentials);
+    }
 
-  NhlFullGameScheduleBuilder fullGameSchedule() {
-    return NhlFullGameScheduleBuilder.fullGameSchedule().credentials(getCredentials());
-  }
+    NhlFullGameScheduleBuilder fullGameSchedule() {
+        return NhlFullGameScheduleBuilder.fullGameSchedule().credentials(getCredentials());
+    }
+
+    NhlCumulativePlayerStatesBuilder cumulativePlayerStatesBuilder() {
+        return NhlCumulativePlayerStatesBuilder.cumulativePlayerStatesBuilder().credentials(getCredentials());
+    }
 }

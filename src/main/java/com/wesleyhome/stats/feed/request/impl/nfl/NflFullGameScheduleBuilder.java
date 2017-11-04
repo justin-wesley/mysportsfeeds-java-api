@@ -1,31 +1,21 @@
 package com.wesleyhome.stats.feed.request.impl.nfl;
 
-import com.wesleyhome.stats.feed.request.api.ApiCredentials;
 import com.wesleyhome.stats.feed.request.api.DateBuilder;
-import com.wesleyhome.stats.feed.request.api.LeagueType;
 import com.wesleyhome.stats.feed.request.impl.BaseFullGameScheduleBuilder;
-import com.wesleyhome.stats.feed.request.impl.DefaultApiRequest;
 
 @SuppressWarnings("unchecked")
 public final class NflFullGameScheduleBuilder extends
-    BaseFullGameScheduleBuilder<NflFullGameScheduleBuilder> implements
-    DateBuilder<NflFullGameScheduleBuilder> {
+        BaseFullGameScheduleBuilder<NflFullGameScheduleBuilder> implements
+        DateBuilder<NflFullGameScheduleBuilder> {
 
 
-  public static NflFullGameScheduleBuilder fullGameSchedule() {
-    return new NflFullGameScheduleBuilder();
-  }
+    private NflFullGameScheduleBuilder() {
+        super(NflFullGameScheduleRequest.class);
+    }
 
-  @Override
-  protected <R> DefaultApiRequest<R> createRequest(ApiCredentials credentials, Integer season,
-      LeagueType leagueType, Class<R> responseType) {
-    return new NflFullGameScheduleRequest(credentials, season, leagueType, responseType);
-  }
+    public static NflFullGameScheduleBuilder fullGameSchedule() {
+        return new NflFullGameScheduleBuilder();
+    }
 
-  @Override
-  protected <R> DefaultApiRequest<R> createRequest(ApiCredentials credentials,
-      Class<R> responseType) {
-    return new NflFullGameScheduleRequest(credentials, responseType);
-  }
 
 }

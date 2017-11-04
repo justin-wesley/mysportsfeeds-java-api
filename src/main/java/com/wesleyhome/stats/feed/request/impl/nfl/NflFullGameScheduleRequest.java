@@ -7,12 +7,12 @@ import com.wesleyhome.stats.feed.request.impl.DefaultApiRequest;
 
 class NflFullGameScheduleRequest<R> extends DefaultApiRequest<R> {
 
-  NflFullGameScheduleRequest(ApiCredentials credentials, Class<R> responseType) {
-    this(credentials, null, null, responseType);
-  }
+    NflFullGameScheduleRequest(ApiCredentials credentials, Class<R> responseType) {
+        this(credentials, null, null, responseType);
+    }
 
-  NflFullGameScheduleRequest(ApiCredentials credentials, Integer startYear, LeagueType leagueType,
-      Class<R> responseType) {
-    super(credentials, "full_game_schedule", LeagueEnum.NFL, startYear, leagueType, responseType);
-  }
+    NflFullGameScheduleRequest(ApiCredentials credentials, Integer startYear, LeagueType leagueType,
+                               Class<R> responseType) {
+        super(credentials, "full_game_schedule", LeagueEnum.NFL, startYear, leagueType, responseType);
+    }
 }

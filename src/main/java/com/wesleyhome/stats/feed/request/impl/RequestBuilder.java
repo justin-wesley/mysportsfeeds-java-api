@@ -1,26 +1,58 @@
 package com.wesleyhome.stats.feed.request.impl;
 
-import java.util.List;
-import java.util.function.Supplier;
+import com.wesleyhome.stats.feed.request.api.ApiCredentials;
+import com.wesleyhome.stats.feed.request.api.LeagueType;
 
-public abstract class RequestBuilder {
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
-  protected <R> void applyListParameters(DefaultApiRequest<R> request, List<String> list,
-      String listName) {
-    if (!list.isEmpty()) {
-      String teamValue = String.join(",", list);
-      request.addParameter(listName, teamValue);
+public abstract class RequestBuilder<B extends RequestBuilder<B>> {
+
+    private ApiCredentials credentials;
+    private Integer season;
+    private LeagueType leagueType;
+    private final Class<? extends DefaultApiRequest<?>> requestClass;
+    protected final B SELF;
+
+    protected <C extends DefaultApiRequest<T>, T> RequestBuilder(Class<C> requestClass) {
+        this.requestClass = requestClass;
+        SELF = (B) this;
     }
-  }
 
-  protected <R> void applyParameter(DefaultApiRequest<R> request, String name, Object value) {
-    if (value != null) {
-      request.addParameter(name, value.toString());
+    public B credentials(ApiCredentials credentials) {
+        this.credentials = credentials;
+        return SELF;
     }
-  }
 
-  protected <R> void applyParameter(DefaultApiRequest<R> request, String name,
-      Supplier<?> supplier) {
-    applyParameter(request, name, supplier.get());
-  }
+    public B season(Integer season) {
+        this.season = season;
+        return SELF;
+    }
+
+    public B leagueType(LeagueType leagueType) {
+        this.leagueType = leagueType;
+        return SELF;
+    }
+
+    protected <R> DefaultApiRequest<R> createRequest(Class<R> responseType) {
+        try {
+            DefaultApiRequest<R> request;
+            if (season == null) {
+                Constructor<? extends DefaultApiRequest<?>> constructor = this.requestClass.getDeclaredConstructor(ApiCredentials.class, Class.class);
+                constructor.setAccessible(true);
+                request = (DefaultApiRequest<R>) constructor.newInstance(credentials, responseType);
+            } else {
+                if (leagueType == null) {
+                    leagueType = (LeagueType.REGULAR);
+                }
+                Constructor<? extends DefaultApiRequest<?>> constructor = this.requestClass.getDeclaredConstructor(ApiCredentials.class, Integer.class, LeagueType.class, Class.class);
+                constructor.setAccessible(true);
+                request = (DefaultApiRequest<R>) constructor.newInstance(credentials, season, leagueType, responseType);
+            }
+            return request;
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

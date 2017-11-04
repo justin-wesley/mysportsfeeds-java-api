@@ -9,28 +9,28 @@ import org.junit.jupiter.api.Test;
 
 public abstract class DefaultApiRequestTest {
 
-  private ApiRequest<JsonNode> request;
+    private ApiRequest<JsonNode> request;
 
-  @BeforeEach
-  void setUp() throws Exception {
-    request = getRequest(new ResourceBundleCredentials("application"));
-  }
+    @BeforeEach
+    void setUp() throws Exception {
+        request = getRequest(new ResourceBundleCredentials("application"));
+    }
 
-  protected abstract ApiRequest<JsonNode> getRequest(ApiCredentials credentials);
+    protected abstract ApiRequest<JsonNode> getRequest(ApiCredentials credentials);
 
 
-  @Test
-  void sendRequest() throws Exception {
-    JsonNode response = request.sendRequest();
-    println(response);
-    assertResponse(response);
-  }
+    @Test
+    void sendRequest() throws Exception {
+        JsonNode response = request.sendRequest();
+        println(response);
+        assertResponse(response);
+    }
 
-  protected abstract void assertResponse(JsonNode response);
+    protected abstract void assertResponse(JsonNode response);
 
-  private void println(JsonNode response) throws Exception {
-    System.out
-        .println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
-  }
+    private void println(JsonNode response) throws Exception {
+        System.out
+                .println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
+    }
 
 }

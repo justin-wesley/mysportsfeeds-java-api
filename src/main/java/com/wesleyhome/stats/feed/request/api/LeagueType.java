@@ -1,9 +1,9 @@
 package com.wesleyhome.stats.feed.request.api;
 
 public enum LeagueType {
-  REGULAR, PLAYOFF;
+    REGULAR, PLAYOFF;
 
-  public String toString() {
-    return name().toLowerCase();
-  }
+    public String toString() {
+        return name().toLowerCase();
+    }
 }
