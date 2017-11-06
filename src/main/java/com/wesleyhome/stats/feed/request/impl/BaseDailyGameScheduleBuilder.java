@@ -13,7 +13,7 @@ public abstract class BaseDailyGameScheduleBuilder<B extends BaseDailyGameSchedu
 
     private List<String> teams = new ArrayList<>();
     private List<GameStatus> statuses = new ArrayList<>();
-    private DateConverter date;
+    private DateConverter date; // TODO: Implemented incorrectly. Must be in YYYYMMDD format
     private Boolean force;
 
     protected <C extends DefaultApiRequest<T>, T> BaseDailyGameScheduleBuilder(Class<C> requestClass) {

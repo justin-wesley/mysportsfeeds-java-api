@@ -5,19 +5,20 @@ import com.wesleyhome.stats.feed.request.api.ApiRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseCumulativePlayerStatsBuilder<B extends BaseCumulativePlayerStatsBuilder<B>> extends
+public abstract class BasePlayerStatsBuilder<B extends BasePlayerStatsBuilder<B>> extends
         RequestBuilder<B> {
 
     protected List<String> teams = new ArrayList<>();
     protected List<String> players = new ArrayList<>();
     protected List<String> positions = new ArrayList<>();
     protected List<String> countries = new ArrayList<>();
+    protected List<String> playerStats = new ArrayList<>();
     protected String sort;
     protected Integer offset;
     protected Integer limit;
     protected Boolean force;
 
-    protected <C extends DefaultApiRequest<T>, T> BaseCumulativePlayerStatsBuilder(Class<C> requestClass) {
+    protected <C extends DefaultApiRequest<T>, T> BasePlayerStatsBuilder(Class<C> requestClass) {
         super(requestClass);
     }
 
@@ -62,6 +63,16 @@ public abstract class BaseCumulativePlayerStatsBuilder<B extends BaseCumulativeP
         return SELF;
     }
 
+    public B playerStats(List<String> playerStats) {
+        this.playerStats = playerStats == null ? new ArrayList<>() : playerStats;
+        return SELF;
+    }
+
+    public B playerStat(String playerStat) {
+        this.playerStats.add(playerStat);
+        return SELF;
+    }
+
     public B sort(String sort) {
         this.sort = sort;
         return SELF;
@@ -82,12 +93,13 @@ public abstract class BaseCumulativePlayerStatsBuilder<B extends BaseCumulativeP
         return SELF;
     }
 
-    public final <R> ApiRequest<R> buildRequest(Class<R> responseType) {
+    public <R> ApiRequest<R> buildRequest(Class<R> responseType) {
         return createRequest(responseType)
-                .applyListParameters(teams, "team")
-                .applyListParameters(countries, "countries")
-                .applyListParameters(positions, "positions")
-                .applyListParameters(players, "players")
+                .applyListParameters("team", teams)
+                .applyListParameters("countries", countries)
+                .applyListParameters("positions", positions)
+                .applyListParameters("players", players)
+                .applyListParameters("playerstats", playerStats)
                 .applyParameter("sort", sort)
                 .applyParameter("offset", offset)
                 .applyParameter("limit", limit)

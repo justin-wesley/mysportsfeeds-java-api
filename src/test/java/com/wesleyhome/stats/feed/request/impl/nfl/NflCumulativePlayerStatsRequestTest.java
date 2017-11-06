@@ -15,7 +15,7 @@ class NflCumulativePlayerStatsRequestTest extends DefaultApiRequestTest {
     @Override
     protected ApiRequest<JsonNode> getRequest(ApiCredentials credentials) {
         return nfl(credentials)
-                .cumulativePlayerStatesBuilder()
+                .cumulativePlayerStates()
                 .season(2017)
                 .leagueType(REGULAR)
                 .team("min")

@@ -14,8 +14,12 @@ public final class NhlApi extends BaseApi {
         return NhlFullGameScheduleBuilder.fullGameSchedule().credentials(getCredentials());
     }
 
-    NhlCumulativePlayerStatesBuilder cumulativePlayerStatesBuilder() {
+    NhlCumulativePlayerStatesBuilder cumulativePlayerStates() {
         return NhlCumulativePlayerStatesBuilder.cumulativePlayerStatesBuilder().credentials(getCredentials());
+    }
+
+    NhlDailyPlayerStatsBuilder dailyPlayerStates() {
+        return NhlDailyPlayerStatsBuilder.dailyPlayerStatesBuilder().credentials(getCredentials());
     }
 
     NhlDailyGameScheduleBuilder dailyGameSchedule() {

@@ -38,21 +38,39 @@ public abstract class RequestBuilder<B extends RequestBuilder<B>> {
         try {
             DefaultApiRequest<R> request;
             if (season == null) {
-                Constructor<? extends DefaultApiRequest<?>> constructor = this.requestClass.getDeclaredConstructor(ApiCredentials.class, Class.class);
+                Constructor<? extends DefaultApiRequest<?>> constructor = this.requestClass.getDeclaredConstructor(getCurrentSeasonParameterTypes());
                 constructor.setAccessible(true);
-                request = (DefaultApiRequest<R>) constructor.newInstance(credentials, responseType);
+                request = (DefaultApiRequest<R>) constructor.newInstance(getCurrentSeasonParameters(credentials, responseType));
             } else {
                 if (leagueType == null) {
                     leagueType = (LeagueType.REGULAR);
                 }
-                Constructor<? extends DefaultApiRequest<?>> constructor = this.requestClass.getDeclaredConstructor(ApiCredentials.class, Integer.class, LeagueType.class, Class.class);
+                Constructor<? extends DefaultApiRequest<?>> constructor = this.requestClass.getDeclaredConstructor(getDefinedSeasonParameterTypes());
                 constructor.setAccessible(true);
-                request = (DefaultApiRequest<R>) constructor.newInstance(credentials, season, leagueType, responseType);
+                request = (DefaultApiRequest<R>) constructor.newInstance(getDefinedSeasonParameters(credentials, season, leagueType, responseType));
             }
             return request;
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected <R> Object[] getCurrentSeasonParameters(ApiCredentials credentials, Class<R> responseType) {
+        return new Object[]{credentials, responseType};
+    }
+
+
+    protected <R> Object[] getDefinedSeasonParameters(ApiCredentials credentials, Integer season, LeagueType leagueType, Class<R> responseType) {
+        return new Object[]{credentials, season, leagueType, responseType};
+    }
+
+
+    protected Class<?>[] getCurrentSeasonParameterTypes() {
+        return new Class<?>[]{ApiCredentials.class, Class.class};
+    }
+
+    protected Class<?>[] getDefinedSeasonParameterTypes() {
+        return new Class<?>[]{ApiCredentials.class, Integer.class, LeagueType.class, Class.class};
     }
 
 }

@@ -14,7 +14,15 @@ public final class NflApi extends BaseApi {
         return NflFullGameScheduleBuilder.fullGameSchedule().credentials(getCredentials());
     }
 
-    NflCumulativePlayerStatesBuilder cumulativePlayerStatesBuilder() {
+    NflCumulativePlayerStatesBuilder cumulativePlayerStates() {
         return NflCumulativePlayerStatesBuilder.cumulativePlayerStatesBuilder().credentials(getCredentials());
+    }
+
+    NflDailyPlayerStatsBuilder dailyPlayerStates() {
+        return NflDailyPlayerStatsBuilder.dailyPlayerStatesBuilder().credentials(getCredentials());
+    }
+
+    NflDailyGameScheduleBuilder dailyGameSchedule() {
+        return NflDailyGameScheduleBuilder.dailyGameSchedule().credentials(getCredentials());
     }
 }

@@ -148,7 +148,7 @@ public abstract class DefaultApiRequest<R> implements ApiRequest<R> {
         return !getParameters().isEmpty();
     }
 
-    protected Map<String, String> getParameters() {
+    private Map<String, String> getParameters() {
         return this.parameters;
     }
 
@@ -156,7 +156,7 @@ public abstract class DefaultApiRequest<R> implements ApiRequest<R> {
         getParameters().put(key, Objects.toString(value, null));
     }
 
-    public DefaultApiRequest<R> applyListParameters(List<String> list, String listName) {
+    public DefaultApiRequest<R> applyListParameters(String listName, List<String> list) {
         if (!list.isEmpty()) {
             String value = String.join(",", list);
             addParameter(listName, value);

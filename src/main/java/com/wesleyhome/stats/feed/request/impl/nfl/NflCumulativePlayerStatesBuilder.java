@@ -1,8 +1,8 @@
 package com.wesleyhome.stats.feed.request.impl.nfl;
 
-import com.wesleyhome.stats.feed.request.impl.BaseCumulativePlayerStatsBuilder;
+import com.wesleyhome.stats.feed.request.impl.BasePlayerStatsBuilder;
 
-public final class NflCumulativePlayerStatesBuilder extends BaseCumulativePlayerStatsBuilder<NflCumulativePlayerStatesBuilder> {
+public final class NflCumulativePlayerStatesBuilder extends BasePlayerStatsBuilder<NflCumulativePlayerStatesBuilder> {
 
     public static NflCumulativePlayerStatesBuilder cumulativePlayerStatesBuilder() {
         return new NflCumulativePlayerStatesBuilder();

@@ -1,46 +1,43 @@
 package com.wesleyhome.stats.feed.request.impl;
 
 import com.wesleyhome.stats.feed.request.api.ApiRequest;
-import com.wesleyhome.stats.feed.request.api.DateBuilder;
-import com.wesleyhome.stats.feed.request.api.DateConverter;
-import com.wesleyhome.stats.feed.request.api.GameStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseFullGameScheduleBuilder<B extends BaseFullGameScheduleBuilder<B>> extends
-        RequestBuilder<B> implements DateBuilder<B> {
+public abstract class BaseGameBoxScoreBuilder<B extends BaseGameBoxScoreBuilder<B>> extends
+        RequestBuilder<B> {
 
-    protected List<String> teams = new ArrayList<>();
-    protected DateConverter date;
-    protected List<GameStatus> statuses = new ArrayList<>();
+    protected List<String> teamstats = new ArrayList<>();
+    protected List<String> playerStats = new ArrayList<>();
     protected String sort;
     protected Integer offset;
     protected Integer limit;
     protected Boolean force;
 
-    protected <C extends DefaultApiRequest<T>, T> BaseFullGameScheduleBuilder(Class<C> requestClass) {
+    protected <C extends DefaultApiRequest<T>, T> BaseGameBoxScoreBuilder(Class<C> requestClass) {
         super(requestClass);
     }
 
 
-    public B teams(List<String> teams) {
-        this.teams = teams == null ? new ArrayList<>() : teams;
+    public B teamstats(List<String> teamstats) {
+        this.teamstats = teamstats == null ? new ArrayList<>() : teamstats;
         return SELF;
     }
 
     public B team(String team) {
-        this.teams.add(team);
+        this.teamstats.add(team);
         return SELF;
     }
 
-    public B date(DateConverter date) {
-        this.date = date;
+
+    public B playerStats(List<String> playerStats) {
+        this.playerStats = playerStats == null ? new ArrayList<>() : playerStats;
         return SELF;
     }
 
-    public B statuses(List<GameStatus> statuses) {
-        this.statuses = statuses;
+    public B playerStat(String playerStat) {
+        this.playerStats.add(playerStat);
         return SELF;
     }
 
@@ -66,9 +63,8 @@ public abstract class BaseFullGameScheduleBuilder<B extends BaseFullGameSchedule
 
     public final <R> ApiRequest<R> buildRequest(Class<R> responseType) {
         return createRequest(responseType)
-                .applyListParameters("team", teams)
-                .applyParameters("status", statuses)
-                .applyParameter("date", date::convert)
+                .applyListParameters("teamstats", teamstats)
+                .applyListParameters("playerstats", playerStats)
                 .applyParameter("sort", sort)
                 .applyParameter("offset", offset)
                 .applyParameter("limit", limit)
