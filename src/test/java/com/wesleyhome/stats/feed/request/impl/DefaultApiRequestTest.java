@@ -4,25 +4,26 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wesleyhome.stats.feed.request.api.ApiCredentials;
 import com.wesleyhome.stats.feed.request.api.ApiRequest;
+import com.wesleyhome.stats.feed.request.api.credentials.ResourceBundleCredentials;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public abstract class DefaultApiRequestTest {
 
-    private ApiRequest<JsonNode> request;
+    private ApiRequest request;
 
     @BeforeEach
     void setUp() throws Exception {
         request = getRequest(new ResourceBundleCredentials("application"));
     }
 
-    protected abstract ApiRequest<JsonNode> getRequest(ApiCredentials credentials);
+    protected abstract ApiRequest getRequest(ApiCredentials credentials);
 
 
     @Test
     void sendRequest() throws Exception {
-        JsonNode response = request.sendRequest();
-        println(response);
+        JsonNode response = request.sendRequest(JsonNode.class);
+//        println(response);
         assertResponse(response);
     }
 

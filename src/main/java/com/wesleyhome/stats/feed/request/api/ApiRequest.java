@@ -1,6 +1,6 @@
 package com.wesleyhome.stats.feed.request.api;
 
-public interface ApiRequest<R> {
+public interface ApiRequest {
 
-    R sendRequest();
+    <R> R sendRequest(Class<R> responseType);
 }

@@ -1,7 +1,5 @@
 package com.wesleyhome.stats.feed.request.api;
 
-import com.wesleyhome.stats.feed.request.impl.DateConverters;
-
 import java.time.chrono.ChronoLocalDate;
 
 public interface DateBuilder<B extends DateBuilder<B>> {

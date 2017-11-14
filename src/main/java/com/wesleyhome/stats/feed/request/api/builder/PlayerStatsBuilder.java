@@ -1,0 +1,106 @@
+package com.wesleyhome.stats.feed.request.api.builder;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class PlayerStatsBuilder<B extends PlayerStatsBuilder<B>> extends
+        RequestBuilder<B> {
+
+    private List<String> teams = new ArrayList<>();
+    private List<String> players = new ArrayList<>();
+    private List<String> positions = new ArrayList<>();
+    private List<String> countries = new ArrayList<>();
+    private List<String> playerStats = new ArrayList<>();
+    private String sort;
+    private Integer offset;
+    private Integer limit;
+    private Boolean force;
+
+    protected PlayerStatsBuilder(String feedName) {
+        super(feedName);
+    }
+
+
+    public B teams(List<String> teams) {
+        this.teams = teams == null ? new ArrayList<>() : teams;
+        return SELF;
+    }
+
+    public B team(String team) {
+        this.teams.add(team);
+        return SELF;
+    }
+
+    public B players(List<String> players) {
+        this.players = players == null ? new ArrayList<>() : players;
+        return SELF;
+    }
+
+    public B player(String player) {
+        this.players.add(player);
+        return SELF;
+    }
+
+    public B positions(List<String> positions) {
+        this.positions = positions == null ? new ArrayList<>() : positions;
+        return SELF;
+    }
+
+    public B position(String position) {
+        this.positions.add(position);
+        return SELF;
+    }
+
+    public B countries(List<String> countries) {
+        this.countries = countries == null ? new ArrayList<>() : countries;
+        return SELF;
+    }
+
+    public B country(String country) {
+        this.countries.add(country);
+        return SELF;
+    }
+
+    public B playerStats(List<String> playerStats) {
+        this.playerStats = playerStats == null ? new ArrayList<>() : playerStats;
+        return SELF;
+    }
+
+    public B playerStat(String playerStat) {
+        this.playerStats.add(playerStat);
+        return SELF;
+    }
+
+    public B sort(String sort) {
+        this.sort = sort;
+        return SELF;
+    }
+
+    public B offset(Integer offset) {
+        this.offset = offset;
+        return SELF;
+    }
+
+    public B limit(Integer limit) {
+        this.limit = limit;
+        return SELF;
+    }
+
+    public B force(Boolean force) {
+        this.force = force;
+        return SELF;
+    }
+
+    @Override
+    protected void buildRequest(DefaultApiRequest request) {
+        request.applyListParameters("team", teams)
+                .applyListParameters("countries", countries)
+                .applyListParameters("positions", positions)
+                .applyListParameters("players", players)
+                .applyListParameters("playerstats", playerStats)
+                .applyParameter("sort", sort)
+                .applyParameter("offset", offset)
+                .applyParameter("limit", limit)
+                .applyParameter("force", force);
+    }
+}

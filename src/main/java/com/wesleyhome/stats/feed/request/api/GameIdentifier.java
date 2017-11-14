@@ -1,7 +1,7 @@
 package com.wesleyhome.stats.feed.request.api;
 
 @FunctionalInterface
-public interface DateConverter {
+public interface GameIdentifier {
 
-    String toDateValue();
+    String toGameId();
 }

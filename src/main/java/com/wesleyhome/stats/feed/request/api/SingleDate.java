@@ -4,8 +4,8 @@ public interface SingleDate {
 
     DateConverter converter();
 
-    default String convert() {
-        return converter().convert();
+    default String toDateValue() {
+        return converter().toDateValue();
     }
 
 }
