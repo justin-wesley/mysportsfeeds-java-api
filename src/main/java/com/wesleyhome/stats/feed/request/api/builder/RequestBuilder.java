@@ -3,6 +3,7 @@ package com.wesleyhome.stats.feed.request.api.builder;
 import com.wesleyhome.stats.feed.request.api.ApiCredentials;
 import com.wesleyhome.stats.feed.request.api.League;
 import com.wesleyhome.stats.feed.request.api.LeagueType;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.ApiParameterPlugin;
 
 public abstract class RequestBuilder<B extends RequestBuilder<B>> {
 
@@ -12,10 +13,16 @@ public abstract class RequestBuilder<B extends RequestBuilder<B>> {
     private LeagueType leagueType;
     protected final B SELF;
     private League league;
+    private ListManagerBuilder<ApiParameterPlugin> plugins = new ListManagerBuilder<>();
 
     protected RequestBuilder(String feedName) {
         this.feedName = feedName;
         SELF = (B) this;
+    }
+
+    B plugin(ApiParameterPlugin plugin, ApiParameterPlugin... plugins) {
+        this.plugins.add(plugin, plugins);
+        return SELF;
     }
 
     B credentials(ApiCredentials credentials) {
@@ -40,11 +47,10 @@ public abstract class RequestBuilder<B extends RequestBuilder<B>> {
 
     public final <R> R request(Class<R> responseType) {
         DefaultApiRequest request = createRequest(responseType);
-        buildRequest(request);
+        plugins.forEach(plugin -> plugin.buildRequest(request));
         return request.sendRequest(responseType);
     }
 
-    protected abstract void buildRequest(DefaultApiRequest request);
 
     private DefaultApiRequest createRequest(Class<?> responseType) {
         return new DefaultApiRequest(this.credentials, this.feedName, this.league, this.season, this.leagueType);

@@ -34,6 +34,10 @@ public class StatsApi {
         return b(GameBoxScoreBuilder::new);
     }
 
+    public CurrentSeasonBuilder currentSeason() {
+        return b(CurrentSeasonBuilder::new);
+    }
+
     private <B extends RequestBuilder<B>> B b(Supplier<B> supplier) {
         return supplier.get().credentials(credentials).league(league);
     }

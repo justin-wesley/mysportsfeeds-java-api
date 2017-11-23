@@ -1,74 +1,40 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-import com.wesleyhome.stats.feed.request.api.DateRange;
-import com.wesleyhome.stats.feed.request.api.GameStatus;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.DateApiPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.GameStatusApiPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.LimitApiPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.TeamApiPlugin;
 
-import java.time.LocalDate;
-
-public final class FullGameScheduleBuilder extends
-        RequestBuilder<FullGameScheduleBuilder> implements DateBuilder<FullGameScheduleBuilder> {
+public final class FullGameScheduleBuilder extends RequestBuilder<FullGameScheduleBuilder> {
     public static final String FEED_NAME = "full_game_schedule";
-    protected ListManagerBuilder<String> teams = new ListManagerBuilder<>();
-    protected DateRange date;
-    protected ListManagerBuilder<GameStatus> statuses = new ListManagerBuilder<>();
-    protected String sort;
-    protected Integer offset;
-    protected Integer limit;
-    protected Boolean force;
+    private final TeamApiPlugin<FullGameScheduleBuilder> teams;
+    private final DateApiPlugin<FullGameScheduleBuilder> date;
+    private final GameStatusApiPlugin<FullGameScheduleBuilder> statuses;
+    private final LimitApiPlugin<FullGameScheduleBuilder> limit;
 
     FullGameScheduleBuilder() {
         super(FEED_NAME);
+        plugin(
+                this.teams = new TeamApiPlugin<>(this),
+                this.date = new DateApiPlugin<>(this),
+                this.statuses = new GameStatusApiPlugin<>(this),
+                this.limit = new LimitApiPlugin<>(this)
+        );
     }
 
-
-    public FullGameScheduleBuilder teams(String team, String... additionalTeams) {
-        this.teams.add(team, additionalTeams);
-        return this;
+    public TeamApiPlugin<FullGameScheduleBuilder> team() {
+        return teams;
     }
 
-    public FullGameScheduleBuilder date(DateRange date) {
-        if (date == null) {
-            onDate(LocalDate.now());
-        } else {
-            this.date = date;
-        }
-        return this;
+    public DateApiPlugin<FullGameScheduleBuilder> date() {
+        return date;
     }
 
-    public FullGameScheduleBuilder statuses(GameStatus status, GameStatus... additionalStatuses) {
-        this.statuses.add(status, additionalStatuses);
-        return this;
+    public GameStatusApiPlugin<FullGameScheduleBuilder> status() {
+        return statuses;
     }
 
-    public FullGameScheduleBuilder sort(String sort) {
-        this.sort = sort;
-        return this;
+    public LimitApiPlugin<FullGameScheduleBuilder> limit() {
+        return limit;
     }
-
-    public FullGameScheduleBuilder offset(Integer offset) {
-        this.offset = offset;
-        return this;
-    }
-
-    public FullGameScheduleBuilder limit(Integer limit) {
-        this.limit = limit;
-        return this;
-    }
-
-    public FullGameScheduleBuilder force(Boolean force) {
-        this.force = force;
-        return this;
-    }
-
-    @Override
-    protected void buildRequest(DefaultApiRequest request) {
-        request.applyParameters("team", teams)
-                .applyParameters("status", statuses)
-                .applyParameter("date", date)
-                .applyParameter("sort", sort)
-                .applyParameter("offset", offset)
-                .applyParameter("limit", limit)
-                .applyParameter("force", force);
-    }
-
 }

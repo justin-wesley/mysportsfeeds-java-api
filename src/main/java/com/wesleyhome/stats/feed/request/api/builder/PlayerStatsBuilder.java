@@ -1,51 +1,43 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-public abstract class PlayerStatsBuilder<B extends PlayerStatsBuilder<B>> extends
-        LimitBuilder<B> {
+import com.wesleyhome.stats.feed.request.api.builder.plugins.*;
 
-    private ListManagerBuilder<String> teams = new ListManagerBuilder<>();
-    private ListManagerBuilder<String> players = new ListManagerBuilder<>();
-    private ListManagerBuilder<String> positions = new ListManagerBuilder<>();
-    private ListManagerBuilder<String> countries = new ListManagerBuilder<>();
-    private ListManagerBuilder<String> playerStats = new ListManagerBuilder<>();
+public abstract class PlayerStatsBuilder<B extends PlayerStatsBuilder<B>> extends RequestBuilder<B> {
+
+    private TeamApiPlugin<B> teams;
+    private PlayerApiPlugin<B> players;
+    private PositionsApiPlugin<B> positions;
+    private CountriesApiPlugin<B> countries;
+    private PlayerStatsApiPlugin<B> playerStats;
 
     protected PlayerStatsBuilder(String feedName) {
         super(feedName);
+        plugin(
+                this.teams = new TeamApiPlugin<>(SELF),
+                this.players = new PlayerApiPlugin<>(SELF),
+                this.positions = new PositionsApiPlugin<>(SELF),
+                this.countries = new CountriesApiPlugin<>(SELF),
+                this.playerStats = new PlayerStatsApiPlugin<>(SELF)
+        );
     }
 
-
-    public B teams(String team, String... additionalTeams) {
-        this.teams.add(team, additionalTeams);
-        return SELF;
+    public TeamApiPlugin<B> team() {
+        return teams;
     }
 
-    public B players(String player, String... additionalPlayer) {
-        this.players.add(player, additionalPlayer);
-        return SELF;
+    public CountriesApiPlugin<B> countries() {
+        return countries;
     }
 
-    public B positions(String position, String... positions) {
-        this.positions.add(position, positions);
-        return SELF;
+    public PlayerApiPlugin<B> players() {
+        return players;
     }
 
-    public B countries(String country, String... countries) {
-        this.countries.add(country, countries);
-        return SELF;
+    public PlayerStatsApiPlugin<B> playerStats() {
+        return playerStats;
     }
 
-    public B playerStats(String stat, String... stats) {
-        this.playerStats.add(stat, stats);
-        return SELF;
-    }
-
-    @Override
-    protected void buildRequest(DefaultApiRequest request) {
-        super.buildRequest(request);
-        request.applyParameters("team", teams)
-                .applyParameters("countries", countries)
-                .applyParameters("positions", positions)
-                .applyParameters("players", players)
-                .applyParameters("playerstats", playerStats);
+    public PositionsApiPlugin<B> positions() {
+        return positions;
     }
 }

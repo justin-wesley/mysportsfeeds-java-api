@@ -1,55 +1,35 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-import com.wesleyhome.stats.feed.request.api.GameIdentifier;
-import com.wesleyhome.stats.feed.request.api.GameIdentifierBuilder;
-import com.wesleyhome.stats.feed.request.api.GameIdentifierHolder;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.GameIdentifierPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.PlayerStatsApiPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.TeamStatsApiPlugin;
 
 public final class GameBoxScoreBuilder extends
-        LimitBuilder<GameBoxScoreBuilder> implements GameIdentifierHolder {
+        RequestBuilder<GameBoxScoreBuilder> {
 
     public static final String FEED_NAME = "game_boxscore";
-    private ListManagerBuilder<String> teamstats = new ListManagerBuilder<>();
-    private ListManagerBuilder<String> playerStats = new ListManagerBuilder<>();
-    private GameIdentifier gameIdentifier;
+    private PlayerStatsApiPlugin<GameBoxScoreBuilder> playerStats;
+    private TeamStatsApiPlugin<GameBoxScoreBuilder> teamStats;
+    private GameIdentifierPlugin<GameBoxScoreBuilder> gameIdentifier;
 
     GameBoxScoreBuilder() {
         super(FEED_NAME);
+        plugin(
+                this.playerStats = new PlayerStatsApiPlugin<>(this),
+                this.teamStats = new TeamStatsApiPlugin<>(this),
+                this.gameIdentifier = new GameIdentifierPlugin<>(this)
+        );
     }
 
-
-    public GameBoxScoreBuilder teamstats(String teamstat, String... teamstats) {
-        this.teamstats.add(teamstat, teamstats);
-        return this;
+    public PlayerStatsApiPlugin<GameBoxScoreBuilder> playerStats() {
+        return playerStats;
     }
 
-    public GameBoxScoreBuilder team(String team) {
-        this.teamstats.add(team);
-        return this;
+    public TeamStatsApiPlugin<GameBoxScoreBuilder> teamStats() {
+        return teamStats;
     }
 
-    public GameBoxScoreBuilder playerStats(String stat, String... stats) {
-        this.playerStats.add(stat, stats);
-        return this;
-    }
-
-    public GameIdentifierBuilder forGame() {
-        return new GameIdentifierBuilder(this);
-    }
-
-    @Override
-    public GameBoxScoreBuilder gameId(GameIdentifier gameIdentifier) {
-        this.gameIdentifier = gameIdentifier;
-        return this;
-    }
-
-    @Override
-    protected void buildRequest(DefaultApiRequest request) {
-        if (gameIdentifier == null) {
-            throw new IllegalArgumentException("Game Identifier must be set");
-        }
-        super.buildRequest(request);
-        request.applyParameters("teamstats", teamstats)
-                .applyParameter("gameid", this.gameIdentifier)
-                .applyParameters("playerstats", playerStats);
+    public GameIdentifierPlugin<GameBoxScoreBuilder> gameId() {
+        return gameIdentifier;
     }
 }

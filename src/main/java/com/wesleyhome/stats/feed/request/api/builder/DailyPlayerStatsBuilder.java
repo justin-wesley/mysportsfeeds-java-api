@@ -1,27 +1,23 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
+import com.wesleyhome.stats.feed.request.api.builder.plugins.DateApiPlugin;
+
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
 
-import static com.wesleyhome.stats.feed.request.api.DateConverters.onDate;
-
 public final class DailyPlayerStatsBuilder extends PlayerStatsBuilder<DailyPlayerStatsBuilder> {
     public static final String FEED_NAME = "daily_player_stats";
-    private ChronoLocalDate forDate = LocalDate.now();
+    private DateApiPlugin<DailyPlayerStatsBuilder> forDate;
 
     public DailyPlayerStatsBuilder() {
         super(FEED_NAME);
+        plugin(
+                this.forDate = new DateApiPlugin<>(this)
+        );
     }
-
 
     public DailyPlayerStatsBuilder forDate(ChronoLocalDate forDate) {
-        this.forDate = forDate == null ? LocalDate.now() : forDate;
-        return SELF;
+        return this.forDate.onDate(forDate == null ? LocalDate.now() : forDate);
     }
 
-    @Override
-    protected void buildRequest(DefaultApiRequest request) {
-        super.buildRequest(request);
-        request.applyParameter("fordate", onDate(this.forDate));
-    }
 }

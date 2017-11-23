@@ -21,7 +21,7 @@ import java.util.stream.StreamSupport;
 
 import static java.lang.String.format;
 
-class DefaultApiRequest implements ApiRequest {
+public class DefaultApiRequest implements ApiRequest {
 
     public static final String ROOT_URI = "https://api.mysportsfeeds.com/v1.1/pull";
     public static final String LATEST_SEASON = "latest";
@@ -77,9 +77,13 @@ class DefaultApiRequest implements ApiRequest {
         }
     }
 
+    protected boolean hasSeason() {
+        return true;
+    }
+
     @Override
     public <R> R sendRequest(Class<R> responseType) {
-        String feedUri = format("/%s/%s/%s.json", getLeague(), getSeason(), getFeedName());
+        String feedUri = hasSeason() ? format("/%s/%s/%s.json", getLeague(), getSeason(), getFeedName()) : format("/%s/%s.json", getLeague(), getFeedName());
         if (hasParameters()) {
             feedUri += "?" + getParameters().entrySet().stream()
                     .map(e -> format("%s=%s", e.getKey(), e.getValue()))
@@ -157,13 +161,13 @@ class DefaultApiRequest implements ApiRequest {
 
 
     public DefaultApiRequest applyParameters(String listName, Iterable<?> iterable) {
-        return applyParameters(listName, StreamSupport.stream(iterable.spliterator(), false));
+        Stream<?> stream = StreamSupport.stream(iterable.spliterator(), false);
+        return applyParameters(listName, stream);
     }
 
     private DefaultApiRequest applyParameters(String listName, Stream<?> stream) {
         String value = stream.map(Object::toString).reduce((v1, v2) -> String.format("%s,%s", v1, v2)).orElse(null);
-        addParameter(listName, value);
-        return this;
+        return applyParameter(listName, value);
     }
 
     public DefaultApiRequest applyParameter(String name, Object value) {

@@ -26,12 +26,4 @@ public final class MySportsFeedAPI {
         return nhl(new BasicApiCredentials(username, password));
     }
 
-
-//    public static NflApi nfl(ApiCredentials credentials) {
-//        return new NflApi(credentials);
-//    }
-//
-//    public static NflApi nfl(String username, String password) {
-//        return new NflApi(new BasicApiCredentials(username, password));
-//    }
 }
