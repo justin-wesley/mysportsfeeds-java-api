@@ -1,25 +1,26 @@
 package com.wesleyhome.stats.feed.request.api.builder.plugins;
 
-import com.wesleyhome.stats.feed.request.api.*;
+import com.wesleyhome.stats.feed.request.api.SemanticDate;
+import com.wesleyhome.stats.feed.request.api.TimeUnit;
 import com.wesleyhome.stats.feed.request.api.builder.DefaultApiRequest;
 import com.wesleyhome.stats.feed.request.api.builder.RequestBuilder;
 
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
 
-public class DateApiPlugin<B extends RequestBuilder<B>> implements ApiParameterPlugin {
+public class DateBuilderPlugin<B extends RequestBuilder<B>> implements RequestBuilderPlugin {
 
     private final B builder;
     private final String parameterName;
     private DateRange dateRange;
 
-    public DateApiPlugin(B builder, String parameterName) {
+    public DateBuilderPlugin(B builder, String parameterName) {
         this.builder = builder;
         this.parameterName = parameterName;
         onDate(LocalDate.now());
     }
 
-    public DateApiPlugin(B builder) {
+    public DateBuilderPlugin(B builder) {
         this(builder, "fordate");
     }
 

@@ -1,26 +1,36 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-import com.wesleyhome.stats.feed.request.api.builder.plugins.DateApiPlugin;
-import com.wesleyhome.stats.feed.request.api.builder.plugins.ForcePlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.DateBuilderPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.GameStatusBuilderPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.TeamBuilderPlugin;
 
 import java.time.chrono.ChronoLocalDate;
 
 public class ScoreboardBuilder extends RequestBuilder<ScoreboardBuilder> {
 
     public static final String FEED_NAME = "scoreboard";
-    private final ForcePlugin<ScoreboardBuilder> forcePlugin;
-
-    private final DateApiPlugin<ScoreboardBuilder> dateApiPlugin;
+    private final DateBuilderPlugin<ScoreboardBuilder> forDate;
+    private final TeamBuilderPlugin<ScoreboardBuilder> team;
+    private final GameStatusBuilderPlugin<ScoreboardBuilder> status;
 
     ScoreboardBuilder() {
         super(FEED_NAME);
         plugin(
-                dateApiPlugin = new DateApiPlugin<>(this),
-                this.forcePlugin = new ForcePlugin<>(this)
+                this.forDate = new DateBuilderPlugin<>(this),
+                this.team = new TeamBuilderPlugin<>(this),
+                this.status = new GameStatusBuilderPlugin<>(this)
         );
     }
 
-    public ScoreboardBuilder onDate(ChronoLocalDate localDate) {
-        return dateApiPlugin.onDate(localDate);
+    public TeamBuilderPlugin<ScoreboardBuilder> team() {
+        return team;
+    }
+
+    public ScoreboardBuilder forDate(ChronoLocalDate date) {
+        return this.forDate.onDate(date);
+    }
+
+    public GameStatusBuilderPlugin<ScoreboardBuilder> status() {
+        return status;
     }
 }

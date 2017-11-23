@@ -3,7 +3,6 @@ package com.wesleyhome.stats.feed.request.api.builder;
 import com.wesleyhome.stats.feed.request.api.*;
 import com.wesleyhome.stats.feed.request.rest.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -24,23 +23,24 @@ import static java.lang.String.format;
 public class DefaultApiRequest implements ApiRequest {
 
     public static final String ROOT_URI = "https://api.mysportsfeeds.com/v1.1/pull";
-    public static final String LATEST_SEASON = "latest";
-    public static final String CURRENT_SEASON = "current";
+    private static boolean classSetup = false;
     private ApiCredentials credentials;
     private String feedName;
     //    private Class<R> responseType;
     private LeagueType leagueType;
     private League league;
+    private Season season;
     private Integer startYear;
     private Map<String, String> parameters;
 
     DefaultApiRequest(ApiCredentials credentials, String feedName, League league,
-                      Integer startYear, LeagueType leagueType) {
+                      Integer startYear, Season season, LeagueType leagueType) {
         this.credentials = credentials;
         this.feedName = feedName;
         this.leagueType = leagueType;
         this.league = league;
         this.startYear = startYear;
+        this.season = season;
         this.parameters = new LinkedHashMap<>();
     }
 
@@ -49,31 +49,34 @@ public class DefaultApiRequest implements ApiRequest {
         disableSslVerification();
     }
 
-    private static void disableSslVerification() {
-        try {
-            // Create a trust manager that does not validate certificate chains
-            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
+    static void disableSslVerification() {
+        if (!classSetup) {
+            try {
+                // Create a trust manager that does not validate certificate chains
+                TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
 
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                    }
 
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                    }
                 }
+                };
+
+                // Install the all-trusting trust manager
+                SSLContext sc = SSLContext.getInstance("SSL");
+                sc.init(null, trustAllCerts, new java.security.SecureRandom());
+                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+                // Install the all-trusting host verifier
+                HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+                classSetup = true;
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                e.printStackTrace();
             }
-            };
-
-            // Install the all-trusting trust manager
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-            // Install the all-trusting host verifier
-            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            e.printStackTrace();
         }
     }
 
@@ -91,24 +94,18 @@ public class DefaultApiRequest implements ApiRequest {
                     .orElse("");
         }
 //            URL url = new URL(ROOT_URI + feedUri);
+        String rootUri = ROOT_URI;
+        return sendRequest(responseType, feedUri, rootUri);
+
+    }
+
+    protected <R> R sendRequest(Class<R> responseType, String feedUri, String rootUri) {
         ResponseEntity<R> responseEntity = new RestTemplateBuilder()
                 .basicAuthorization(credentials.getUsername(), credentials.getPassword())
-                .rootUri(ROOT_URI)
+                .rootUri(rootUri)
                 .build()
                 .exchange(feedUri, HttpMethod.GET, null, responseType);
-        HttpStatus statusCode = responseEntity.getStatusCode();
-//        if(statusCode.is2xxSuccessful()){
-//            return responseEntity.getBody();
-//        }
-//        switch (statusCode){
-//            case NO_CONTENT:
-//                throw new NoContentException("Content for request not available yet");
-//            case NOT_MODIFIED:
-//            case OK:
-//                return responseEntity.getBody();
-//        }
         return responseEntity.getBody();
-
     }
 
     private String getFeedName() {
@@ -119,7 +116,12 @@ public class DefaultApiRequest implements ApiRequest {
         League league = getLeague();
         LeagueType leagueType = getLeagueType();
         Integer startYear = getStartYear();
-        String defaultSeason = isDefaultLatest() ? LATEST_SEASON : CURRENT_SEASON;
+        Season season = getSeasonEnum();
+        if (season != null) {
+            return season.name().toLowerCase();
+        }
+        season = isDefaultLatest() ? Season.LATEST : Season.CURRENT;
+        String defaultSeason = season.name().toLowerCase();
         if (leagueType == null) {
             return defaultSeason;
         }
@@ -141,6 +143,10 @@ public class DefaultApiRequest implements ApiRequest {
 
     protected Integer getStartYear() {
         return this.startYear;
+    }
+
+    protected Season getSeasonEnum() {
+        return this.season;
     }
 
     protected boolean hasParameters() {
@@ -178,7 +184,7 @@ public class DefaultApiRequest implements ApiRequest {
     }
 
     public DefaultApiRequest applyParameter(String name, ValueTransformer value) {
-        return applyParameter(name, value.toStringValue());
+        return applyParameter(name, value == null ? null : value.toStringValue());
     }
 
     public LeagueType getLeagueType() {

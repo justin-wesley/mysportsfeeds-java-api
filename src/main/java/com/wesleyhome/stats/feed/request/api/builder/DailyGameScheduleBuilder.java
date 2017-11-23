@@ -1,41 +1,34 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-import com.wesleyhome.stats.feed.request.api.builder.plugins.DateApiPlugin;
-import com.wesleyhome.stats.feed.request.api.builder.plugins.ForcePlugin;
-import com.wesleyhome.stats.feed.request.api.builder.plugins.GameStatusApiPlugin;
-import com.wesleyhome.stats.feed.request.api.builder.plugins.TeamApiPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.DateBuilderPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.GameStatusBuilderPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.TeamBuilderPlugin;
 
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
 
 public final class DailyGameScheduleBuilder extends RequestBuilder<DailyGameScheduleBuilder> {
     public static final String FEED_NAME = "daily_game_schedule";
-    private final ForcePlugin<DailyGameScheduleBuilder> forcePlugin;
-    private final DateApiPlugin<DailyGameScheduleBuilder> forDate;
-    private final TeamApiPlugin<DailyGameScheduleBuilder> teams;
+    private final DateBuilderPlugin<DailyGameScheduleBuilder> forDate;
+    private final TeamBuilderPlugin<DailyGameScheduleBuilder> teams;
 
-    private final GameStatusApiPlugin<DailyGameScheduleBuilder> statuses;
+    private final GameStatusBuilderPlugin<DailyGameScheduleBuilder> statuses;
 
     DailyGameScheduleBuilder() {
         super(FEED_NAME);
         plugin(
-                this.forcePlugin = new ForcePlugin<>(this),
-                this.forDate = new DateApiPlugin<>(this),
-                this.teams = new TeamApiPlugin<>(this),
-                this.statuses = new GameStatusApiPlugin<>(this)
+                this.forDate = new DateBuilderPlugin<>(this),
+                this.teams = new TeamBuilderPlugin<>(this),
+                this.statuses = new GameStatusBuilderPlugin<>(this)
         );
         onDate(LocalDate.now());
     }
 
-    public DailyGameScheduleBuilder force() {
-        return forcePlugin.force(true);
-    }
-
-    public TeamApiPlugin<DailyGameScheduleBuilder> team() {
+    public TeamBuilderPlugin<DailyGameScheduleBuilder> team() {
         return teams;
     }
 
-    public GameStatusApiPlugin<DailyGameScheduleBuilder> status() {
+    public GameStatusBuilderPlugin<DailyGameScheduleBuilder> status() {
         return statuses;
     }
 

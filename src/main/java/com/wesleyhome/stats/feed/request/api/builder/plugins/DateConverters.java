@@ -1,42 +1,47 @@
-package com.wesleyhome.stats.feed.request.api;
+package com.wesleyhome.stats.feed.request.api.builder.plugins;
+
+import com.wesleyhome.stats.feed.request.api.SemanticDate;
+import com.wesleyhome.stats.feed.request.api.TimeUnit;
 
 import java.time.chrono.ChronoLocalDate;
 
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
-public final class DateConverters {
+final class DateConverters {
 
+    private DateConverters() {
+    }
 
-    public static SingleDate onDate(ChronoLocalDate localDate) {
+    static SingleDate onDate(ChronoLocalDate localDate) {
         return () -> sv(localDate);
     }
 
-    public static DateRange since(SemanticDate sDate) {
+    static DateRange since(SemanticDate sDate) {
         return () -> s(sv(sDate));
     }
 
-    public static DateRange since(ChronoLocalDate localDate) {
+    static DateRange since(ChronoLocalDate localDate) {
         return () -> s(sv(localDate));
     }
 
-    public static DateRange since(int time, TimeUnit timeUnit) {
+    static DateRange since(int time, TimeUnit timeUnit) {
         return () -> s(sv(time, timeUnit, "ago"));
     }
 
-    public static DateRange until(SemanticDate sDate) {
+    static DateRange until(SemanticDate sDate) {
         return () -> u(sv(sDate));
     }
 
-    public static DateRange until(ChronoLocalDate localDate) {
+    static DateRange until(ChronoLocalDate localDate) {
         return () -> u(sv(localDate));
     }
 
-    public static DateRange until(int time, TimeUnit timeUnit) {
+    static DateRange until(int time, TimeUnit timeUnit) {
         return () -> s(sv(time, timeUnit, "from-now"));
     }
 
-    public static DateRange between(SingleDate from, SingleDate to) {
+    static DateRange between(SingleDate from, SingleDate to) {
         return () -> "from-" + from.toStringValue() + "-to-" + to.toStringValue();
     }
 

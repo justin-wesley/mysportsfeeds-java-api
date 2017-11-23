@@ -4,40 +4,40 @@ import com.wesleyhome.stats.feed.request.api.builder.plugins.*;
 
 public abstract class PlayerStatsBuilder<B extends PlayerStatsBuilder<B>> extends RequestBuilder<B> {
 
-    private TeamApiPlugin<B> teams;
-    private PlayerApiPlugin<B> players;
-    private PositionsApiPlugin<B> positions;
-    private CountriesApiPlugin<B> countries;
-    private PlayerStatsApiPlugin<B> playerStats;
+    private TeamBuilderPlugin<B> teams;
+    private PlayerBuilderPlugin<B> players;
+    private PositionsBuilderPlugin<B> positions;
+    private CountriesBuilderPlugin<B> countries;
+    private PlayerStatsBuilderPlugin<B> playerStats;
 
     protected PlayerStatsBuilder(String feedName) {
         super(feedName);
         plugin(
-                this.teams = new TeamApiPlugin<>(SELF),
-                this.players = new PlayerApiPlugin<>(SELF),
-                this.positions = new PositionsApiPlugin<>(SELF),
-                this.countries = new CountriesApiPlugin<>(SELF),
-                this.playerStats = new PlayerStatsApiPlugin<>(SELF)
+                this.teams = new TeamBuilderPlugin<>(SELF),
+                this.players = new PlayerBuilderPlugin<>(SELF),
+                this.positions = new PositionsBuilderPlugin<>(SELF),
+                this.countries = new CountriesBuilderPlugin<>(SELF),
+                this.playerStats = new PlayerStatsBuilderPlugin<>(SELF)
         );
     }
 
-    public TeamApiPlugin<B> team() {
+    public TeamBuilderPlugin<B> team() {
         return teams;
     }
 
-    public CountriesApiPlugin<B> countries() {
+    public CountriesBuilderPlugin<B> countries() {
         return countries;
     }
 
-    public PlayerApiPlugin<B> players() {
+    public PlayerBuilderPlugin<B> players() {
         return players;
     }
 
-    public PlayerStatsApiPlugin<B> playerStats() {
+    public PlayerStatsBuilderPlugin<B> playerStats() {
         return playerStats;
     }
 
-    public PositionsApiPlugin<B> positions() {
+    public PositionsBuilderPlugin<B> positions() {
         return positions;
     }
 }

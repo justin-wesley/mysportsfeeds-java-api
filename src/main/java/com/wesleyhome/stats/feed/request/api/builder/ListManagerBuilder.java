@@ -1,24 +1,16 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 public class ListManagerBuilder<T> implements Iterable<T> {
 
-    private List<T> list;
+    private Set<T> list;
 
     public ListManagerBuilder() {
-        this.list = new ArrayList<>();
-    }
-
-    public void set(List<T> list) {
-        if (list != null) {
-            this.list = list;
-        } else {
-            this.list.clear();
-        }
+        this.list = new HashSet<>();
     }
 
     public void add(T val1, T... additionalVals) {

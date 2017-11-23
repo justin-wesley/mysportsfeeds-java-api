@@ -3,27 +3,27 @@ package com.wesleyhome.stats.feed.request.api.builder.plugins;
 import com.wesleyhome.stats.feed.request.api.builder.DefaultApiRequest;
 import com.wesleyhome.stats.feed.request.api.builder.RequestBuilder;
 
-public class LimitApiPlugin<B extends RequestBuilder<B>> implements ApiParameterPlugin {
+public class PagingBuilderPlugin<B extends RequestBuilder<B>> implements RequestBuilderPlugin {
     private final B builder;
     private String sort;
     private Integer offset;
     private Integer limit;
 
-    public LimitApiPlugin(B builder) {
+    public PagingBuilderPlugin(B builder) {
         this.builder = builder;
     }
 
-    public LimitApiPlugin<B> sort(String sort) {
+    public PagingBuilderPlugin<B> sort(String sort) {
         this.sort = sort;
         return this;
     }
 
-    public LimitApiPlugin<B> offset(Integer offset) {
+    public PagingBuilderPlugin<B> offset(Integer offset) {
         this.offset = offset;
         return this;
     }
 
-    public LimitApiPlugin<B> limit(Integer limit) {
+    public PagingBuilderPlugin<B> limit(Integer limit) {
         this.limit = limit;
         return this;
     }

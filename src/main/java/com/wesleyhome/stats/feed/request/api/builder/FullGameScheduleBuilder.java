@@ -1,40 +1,40 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-import com.wesleyhome.stats.feed.request.api.builder.plugins.DateApiPlugin;
-import com.wesleyhome.stats.feed.request.api.builder.plugins.GameStatusApiPlugin;
-import com.wesleyhome.stats.feed.request.api.builder.plugins.LimitApiPlugin;
-import com.wesleyhome.stats.feed.request.api.builder.plugins.TeamApiPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.DateBuilderPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.GameStatusBuilderPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.PagingBuilderPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.TeamBuilderPlugin;
 
 public final class FullGameScheduleBuilder extends RequestBuilder<FullGameScheduleBuilder> {
     public static final String FEED_NAME = "full_game_schedule";
-    private final TeamApiPlugin<FullGameScheduleBuilder> teams;
-    private final DateApiPlugin<FullGameScheduleBuilder> date;
-    private final GameStatusApiPlugin<FullGameScheduleBuilder> statuses;
-    private final LimitApiPlugin<FullGameScheduleBuilder> limit;
+    private final TeamBuilderPlugin<FullGameScheduleBuilder> teams;
+    private final DateBuilderPlugin<FullGameScheduleBuilder> date;
+    private final GameStatusBuilderPlugin<FullGameScheduleBuilder> statuses;
+    private final PagingBuilderPlugin<FullGameScheduleBuilder> limit;
 
     FullGameScheduleBuilder() {
         super(FEED_NAME);
         plugin(
-                this.teams = new TeamApiPlugin<>(this),
-                this.date = new DateApiPlugin<>(this),
-                this.statuses = new GameStatusApiPlugin<>(this),
-                this.limit = new LimitApiPlugin<>(this)
+                this.teams = new TeamBuilderPlugin<>(this),
+                this.date = new DateBuilderPlugin<>(this, "date"),
+                this.statuses = new GameStatusBuilderPlugin<>(this),
+                this.limit = new PagingBuilderPlugin<>(this)
         );
     }
 
-    public TeamApiPlugin<FullGameScheduleBuilder> team() {
+    public TeamBuilderPlugin<FullGameScheduleBuilder> team() {
         return teams;
     }
 
-    public DateApiPlugin<FullGameScheduleBuilder> date() {
+    public DateBuilderPlugin<FullGameScheduleBuilder> date() {
         return date;
     }
 
-    public GameStatusApiPlugin<FullGameScheduleBuilder> status() {
+    public GameStatusBuilderPlugin<FullGameScheduleBuilder> status() {
         return statuses;
     }
 
-    public LimitApiPlugin<FullGameScheduleBuilder> limit() {
+    public PagingBuilderPlugin<FullGameScheduleBuilder> limit() {
         return limit;
     }
 }

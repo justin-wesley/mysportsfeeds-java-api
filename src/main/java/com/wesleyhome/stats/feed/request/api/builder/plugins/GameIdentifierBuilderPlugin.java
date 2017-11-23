@@ -1,25 +1,24 @@
 package com.wesleyhome.stats.feed.request.api.builder.plugins;
 
 import com.wesleyhome.stats.feed.request.api.GameIdentifier;
-import com.wesleyhome.stats.feed.request.api.GameIdentifiers;
 import com.wesleyhome.stats.feed.request.api.builder.DefaultApiRequest;
 import com.wesleyhome.stats.feed.request.api.builder.RequestBuilder;
 
 import java.time.chrono.ChronoLocalDate;
 
-import static com.wesleyhome.stats.feed.request.api.DateConverters.onDate;
+import static com.wesleyhome.stats.feed.request.api.builder.plugins.DateConverters.onDate;
 
-public class GameIdentifierPlugin<B extends RequestBuilder<B>> implements ApiParameterPlugin {
+public class GameIdentifierBuilderPlugin<B extends RequestBuilder<B>> implements RequestBuilderPlugin {
 
     private final B builder;
     private GameIdentifier gameIdentifier;
 
-    public GameIdentifierPlugin(B builder) {
+    public GameIdentifierBuilderPlugin(B builder) {
         this.builder = builder;
     }
 
     public B forGame(Integer gameId) {
-        return gameId(GameIdentifiers.gId(gameId));
+        return gameId(() -> gameId.toString());
     }
 
 
