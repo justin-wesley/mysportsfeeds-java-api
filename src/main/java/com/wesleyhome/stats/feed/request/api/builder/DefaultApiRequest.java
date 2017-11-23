@@ -1,9 +1,6 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-import com.wesleyhome.stats.feed.request.api.ApiCredentials;
-import com.wesleyhome.stats.feed.request.api.ApiRequest;
-import com.wesleyhome.stats.feed.request.api.League;
-import com.wesleyhome.stats.feed.request.api.LeagueType;
+import com.wesleyhome.stats.feed.request.api.*;
 import com.wesleyhome.stats.feed.request.rest.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -17,11 +14,10 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static java.lang.String.format;
 
@@ -159,19 +155,14 @@ class DefaultApiRequest implements ApiRequest {
         getParameters().put(key, Objects.toString(value, null));
     }
 
-    public DefaultApiRequest applyListParameters(String listName, List<String> list) {
-        if (!list.isEmpty()) {
-            String value = String.join(",", list);
-            addParameter(listName, value);
-        }
-        return this;
+
+    public DefaultApiRequest applyParameters(String listName, Iterable<?> iterable) {
+        return applyParameters(listName, StreamSupport.stream(iterable.spliterator(), false));
     }
 
-    public DefaultApiRequest applyParameters(String listName, List<?> list) {
-        if (!list.isEmpty()) {
-            List<String> value = list.stream().map(Object::toString).collect(Collectors.toList());
-            addParameter(listName, String.join(",", value));
-        }
+    private DefaultApiRequest applyParameters(String listName, Stream<?> stream) {
+        String value = stream.map(Object::toString).reduce((v1, v2) -> String.format("%s,%s", v1, v2)).orElse(null);
+        addParameter(listName, value);
         return this;
     }
 
@@ -182,8 +173,8 @@ class DefaultApiRequest implements ApiRequest {
         return this;
     }
 
-    public DefaultApiRequest applyParameter(String name, Supplier<?> supplier) {
-        return applyParameter(name, supplier.get());
+    public DefaultApiRequest applyParameter(String name, ValueTransformer value) {
+        return applyParameter(name, value.toStringValue());
     }
 
     public LeagueType getLeagueType() {

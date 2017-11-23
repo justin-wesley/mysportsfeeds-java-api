@@ -7,44 +7,37 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 
 public final class DateConverters {
 
-    public static SingleDate sd(SemanticDate semanticDate) {
-        return semanticDate::converter;
-    }
 
-    public static SingleDate sd(ChronoLocalDate localDate) {
-        return () -> onDate(localDate);
-    }
-
-    public static DateConverter onDate(ChronoLocalDate localDate) {
+    public static SingleDate onDate(ChronoLocalDate localDate) {
         return () -> sv(localDate);
     }
 
-    public static DateConverter since(SemanticDate sDate) {
+    public static DateRange since(SemanticDate sDate) {
         return () -> s(sv(sDate));
     }
 
-    public static DateConverter since(ChronoLocalDate localDate) {
+    public static DateRange since(ChronoLocalDate localDate) {
         return () -> s(sv(localDate));
     }
 
-    public static DateConverter since(int time, TimeUnit timeUnit) {
+    public static DateRange since(int time, TimeUnit timeUnit) {
         return () -> s(sv(time, timeUnit, "ago"));
     }
 
-    public static DateConverter until(SemanticDate sDate) {
+    public static DateRange until(SemanticDate sDate) {
         return () -> u(sv(sDate));
     }
 
-    public static DateConverter until(ChronoLocalDate localDate) {
+    public static DateRange until(ChronoLocalDate localDate) {
         return () -> u(sv(localDate));
     }
 
-    public static DateConverter until(int time, TimeUnit timeUnit) {
+    public static DateRange until(int time, TimeUnit timeUnit) {
         return () -> s(sv(time, timeUnit, "from-now"));
     }
 
-    public static DateConverter between(SingleDate from, SingleDate to) {
-        return () -> "from-" + from.toDateValue() + "-to-" + to.toDateValue();
+    public static DateRange between(SingleDate from, SingleDate to) {
+        return () -> "from-" + from.toStringValue() + "-to-" + to.toStringValue();
     }
 
     private static String sv(int time, TimeUnit timeUnit, String suffix) {

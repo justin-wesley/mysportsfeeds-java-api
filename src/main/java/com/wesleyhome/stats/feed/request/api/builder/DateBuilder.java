@@ -1,13 +1,15 @@
-package com.wesleyhome.stats.feed.request.api;
+package com.wesleyhome.stats.feed.request.api.builder;
+
+import com.wesleyhome.stats.feed.request.api.*;
 
 import java.time.chrono.ChronoLocalDate;
 
 public interface DateBuilder<B extends DateBuilder<B>> {
 
-    B date(DateConverter converter);
+    B date(DateRange converter);
 
     default B onDate(SemanticDate today) {
-        return date(today.converter());
+        return date(today);
     }
 
     default B onDate(String date) {

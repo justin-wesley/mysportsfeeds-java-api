@@ -1,12 +1,11 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-import com.wesleyhome.stats.feed.request.api.DateConverter;
-import com.wesleyhome.stats.feed.request.api.DateConverters;
-
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
 
-public class DailyPlayerStatsBuilder extends PlayerStatsBuilder<DailyPlayerStatsBuilder> {
+import static com.wesleyhome.stats.feed.request.api.DateConverters.onDate;
+
+public final class DailyPlayerStatsBuilder extends PlayerStatsBuilder<DailyPlayerStatsBuilder> {
     public static final String FEED_NAME = "daily_player_stats";
     private ChronoLocalDate forDate = LocalDate.now();
 
@@ -23,7 +22,6 @@ public class DailyPlayerStatsBuilder extends PlayerStatsBuilder<DailyPlayerStats
     @Override
     protected void buildRequest(DefaultApiRequest request) {
         super.buildRequest(request);
-        DateConverter onDate = DateConverters.onDate(this.forDate);
-        request.applyParameter("for-date", onDate::toDateValue);
+        request.applyParameter("fordate", onDate(this.forDate));
     }
 }

@@ -1,106 +1,51 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class PlayerStatsBuilder<B extends PlayerStatsBuilder<B>> extends
-        RequestBuilder<B> {
+        LimitBuilder<B> {
 
-    private List<String> teams = new ArrayList<>();
-    private List<String> players = new ArrayList<>();
-    private List<String> positions = new ArrayList<>();
-    private List<String> countries = new ArrayList<>();
-    private List<String> playerStats = new ArrayList<>();
-    private String sort;
-    private Integer offset;
-    private Integer limit;
-    private Boolean force;
+    private ListManagerBuilder<String> teams = new ListManagerBuilder<>();
+    private ListManagerBuilder<String> players = new ListManagerBuilder<>();
+    private ListManagerBuilder<String> positions = new ListManagerBuilder<>();
+    private ListManagerBuilder<String> countries = new ListManagerBuilder<>();
+    private ListManagerBuilder<String> playerStats = new ListManagerBuilder<>();
 
     protected PlayerStatsBuilder(String feedName) {
         super(feedName);
     }
 
 
-    public B teams(List<String> teams) {
-        this.teams = teams == null ? new ArrayList<>() : teams;
+    public B teams(String team, String... additionalTeams) {
+        this.teams.add(team, additionalTeams);
         return SELF;
     }
 
-    public B team(String team) {
-        this.teams.add(team);
+    public B players(String player, String... additionalPlayer) {
+        this.players.add(player, additionalPlayer);
         return SELF;
     }
 
-    public B players(List<String> players) {
-        this.players = players == null ? new ArrayList<>() : players;
+    public B positions(String position, String... positions) {
+        this.positions.add(position, positions);
         return SELF;
     }
 
-    public B player(String player) {
-        this.players.add(player);
+    public B countries(String country, String... countries) {
+        this.countries.add(country, countries);
         return SELF;
     }
 
-    public B positions(List<String> positions) {
-        this.positions = positions == null ? new ArrayList<>() : positions;
-        return SELF;
-    }
-
-    public B position(String position) {
-        this.positions.add(position);
-        return SELF;
-    }
-
-    public B countries(List<String> countries) {
-        this.countries = countries == null ? new ArrayList<>() : countries;
-        return SELF;
-    }
-
-    public B country(String country) {
-        this.countries.add(country);
-        return SELF;
-    }
-
-    public B playerStats(List<String> playerStats) {
-        this.playerStats = playerStats == null ? new ArrayList<>() : playerStats;
-        return SELF;
-    }
-
-    public B playerStat(String playerStat) {
-        this.playerStats.add(playerStat);
-        return SELF;
-    }
-
-    public B sort(String sort) {
-        this.sort = sort;
-        return SELF;
-    }
-
-    public B offset(Integer offset) {
-        this.offset = offset;
-        return SELF;
-    }
-
-    public B limit(Integer limit) {
-        this.limit = limit;
-        return SELF;
-    }
-
-    public B force(Boolean force) {
-        this.force = force;
+    public B playerStats(String stat, String... stats) {
+        this.playerStats.add(stat, stats);
         return SELF;
     }
 
     @Override
     protected void buildRequest(DefaultApiRequest request) {
-        request.applyListParameters("team", teams)
-                .applyListParameters("countries", countries)
-                .applyListParameters("positions", positions)
-                .applyListParameters("players", players)
-                .applyListParameters("playerstats", playerStats)
-                .applyParameter("sort", sort)
-                .applyParameter("offset", offset)
-                .applyParameter("limit", limit)
-                .applyParameter("force", force);
+        super.buildRequest(request);
+        request.applyParameters("team", teams)
+                .applyParameters("countries", countries)
+                .applyParameters("positions", positions)
+                .applyParameters("players", players)
+                .applyParameters("playerstats", playerStats);
     }
 }

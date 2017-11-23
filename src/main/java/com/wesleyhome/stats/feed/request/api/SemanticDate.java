@@ -5,9 +5,8 @@ public enum SemanticDate implements SingleDate {
     TODAY,
     TOMORROW;
 
-
     @Override
-    public DateConverter converter() {
-        return () -> name().toLowerCase();
+    public String toStringValue() {
+        return name().toLowerCase();
     }
 }
