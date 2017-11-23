@@ -4,7 +4,7 @@ import com.wesleyhome.stats.feed.request.api.ApiCredentials;
 import com.wesleyhome.stats.feed.request.api.League;
 import com.wesleyhome.stats.feed.request.api.LeagueType;
 
-abstract class RequestBuilder<B extends RequestBuilder<B>> {
+public abstract class RequestBuilder<B extends RequestBuilder<B>> {
 
     private final String feedName;
     private ApiCredentials credentials;

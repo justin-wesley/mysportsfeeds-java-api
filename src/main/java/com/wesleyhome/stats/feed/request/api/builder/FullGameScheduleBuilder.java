@@ -1,19 +1,16 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
-import com.wesleyhome.stats.feed.request.api.DateBuilder;
-import com.wesleyhome.stats.feed.request.api.DateConverter;
+import com.wesleyhome.stats.feed.request.api.DateRange;
 import com.wesleyhome.stats.feed.request.api.GameStatus;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
-final class FullGameScheduleBuilder extends
+public final class FullGameScheduleBuilder extends
         RequestBuilder<FullGameScheduleBuilder> implements DateBuilder<FullGameScheduleBuilder> {
     public static final String FEED_NAME = "full_game_schedule";
-    protected List<String> teams = new ArrayList<>();
-    protected DateConverter date;
-    protected List<GameStatus> statuses = new ArrayList<>();
+    protected ListManagerBuilder<String> teams = new ListManagerBuilder<>();
+    protected DateRange date;
+    protected ListManagerBuilder<GameStatus> statuses = new ListManagerBuilder<>();
     protected String sort;
     protected Integer offset;
     protected Integer limit;
@@ -24,17 +21,12 @@ final class FullGameScheduleBuilder extends
     }
 
 
-    public FullGameScheduleBuilder teams(List<String> teams) {
-        this.teams = teams == null ? new ArrayList<>() : teams;
+    public FullGameScheduleBuilder teams(String team, String... additionalTeams) {
+        this.teams.add(team, additionalTeams);
         return this;
     }
 
-    public FullGameScheduleBuilder team(String team) {
-        this.teams.add(team);
-        return this;
-    }
-
-    public FullGameScheduleBuilder date(DateConverter date) {
+    public FullGameScheduleBuilder date(DateRange date) {
         if (date == null) {
             onDate(LocalDate.now());
         } else {
@@ -43,8 +35,8 @@ final class FullGameScheduleBuilder extends
         return this;
     }
 
-    public FullGameScheduleBuilder statuses(List<GameStatus> statuses) {
-        this.statuses = statuses;
+    public FullGameScheduleBuilder statuses(GameStatus status, GameStatus... additionalStatuses) {
+        this.statuses.add(status, additionalStatuses);
         return this;
     }
 
@@ -70,9 +62,9 @@ final class FullGameScheduleBuilder extends
 
     @Override
     protected void buildRequest(DefaultApiRequest request) {
-        request.applyListParameters("team", teams)
+        request.applyParameters("team", teams)
                 .applyParameters("status", statuses)
-                .applyParameter("date", date::toDateValue)
+                .applyParameter("date", date)
                 .applyParameter("sort", sort)
                 .applyParameter("offset", offset)
                 .applyParameter("limit", limit)
