@@ -1,14 +1,14 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
 import com.wesleyhome.stats.feed.request.api.builder.plugins.DateBuilderPlugin;
-import com.wesleyhome.stats.feed.request.api.builder.plugins.GameIdentifierBuilderPlugin;
+import com.wesleyhome.stats.feed.request.api.builder.plugins.GameListBuilderPlugin;
 import com.wesleyhome.stats.feed.request.api.builder.plugins.PagingBuilderPlugin;
 import com.wesleyhome.stats.feed.request.api.builder.plugins.TeamBuilderPlugin;
 
 abstract class GameLogsBuilder<B extends GameLogsBuilder<B>> extends RequestBuilder<B> {
 
     private final TeamBuilderPlugin<B> teams;
-    private final GameIdentifierBuilderPlugin<B> game;
+    private final GameListBuilderPlugin<B> game;
     private final DateBuilderPlugin<B> date;
     private final PagingBuilderPlugin<B> paging;
 
@@ -16,7 +16,7 @@ abstract class GameLogsBuilder<B extends GameLogsBuilder<B>> extends RequestBuil
         super(feedName);
         plugin(
                 this.teams = new TeamBuilderPlugin<>(SELF),
-                this.game = new GameIdentifierBuilderPlugin<>(SELF),
+                this.game = new GameListBuilderPlugin<>(SELF, "game"),
                 this.date = new DateBuilderPlugin<>(SELF),
                 this.paging = new PagingBuilderPlugin<>(SELF)
         );
@@ -26,7 +26,7 @@ abstract class GameLogsBuilder<B extends GameLogsBuilder<B>> extends RequestBuil
         return teams;
     }
 
-    public GameIdentifierBuilderPlugin<B> gameId() {
+    public GameListBuilderPlugin<B> games() {
         return game;
     }
 

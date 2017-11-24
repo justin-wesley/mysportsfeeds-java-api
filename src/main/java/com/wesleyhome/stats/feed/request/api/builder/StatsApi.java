@@ -50,6 +50,10 @@ public class StatsApi {
         return b(RosterPlayersBuilder::new);
     }
 
+    public GameStartingLineupBuilder startingLineup() {
+        return b(GameStartingLineupBuilder::new);
+    }
+
     public OverallTeamStandingsBuilder overallTeamStandings() {
         return b(OverallTeamStandingsBuilder::new);
     }
@@ -74,8 +78,15 @@ public class StatsApi {
         return b(LatestUpdatesBuilder::new);
     }
 
+    public PlayerGameLogsBuilder playerGameLogs() {
+        return b(PlayerGameLogsBuilder::new);
+    }
+
+    public TeamGameLogsBuilder teamGameLogs() {
+        return b(TeamGameLogsBuilder::new);
+    }
+
     private <B extends RequestBuilder<B>> B b(Supplier<B> supplier) {
         return supplier.get().credentials(credentials).league(league);
     }
-
 }

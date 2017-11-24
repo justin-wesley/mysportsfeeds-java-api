@@ -3,6 +3,7 @@ package com.wesleyhome.stats.feed.request.api.builder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.wesleyhome.stats.feed.request.api.ApiCredentials;
+import com.wesleyhome.stats.feed.request.api.DailyFantasyLeague;
 import com.wesleyhome.stats.feed.request.api.credentials.ResourceBundleCredentials;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,15 @@ public class DefaultApiRequestTest {
     public static final String DAILY_PLAYER_STATS = "dailyplayerstats";
     public static final String APPLICATION = "application";
     public static final String ROSTER_PLAYERS = "rosterplayers";
+    public static final String MINNESOTA = "min";
+    public static final String CHICAGO = "chi";
+    public static final String BUFFALO = "buf";
+    public static final String GAME_STARTING_LINEUP = "gamestartinglineup";
+    public static final String LATEST_UPDATES = "latestupdates";
+    public static final String DAILY_DFS = "dailydfs";
+    public static final String LAST_UPDATED_ON = "lastUpdatedOn";
+    public static final String PLAYER_GAME_LOGS = "playergamelogs";
+    public static final String TEAM_GAME_LOGS = "teamgamelogs";
     private ApiCredentials apiCredentials;
     private static final LocalDate NOV_22_2017 = LocalDate.of(2017, Month.NOVEMBER, 22);
 
@@ -44,13 +54,34 @@ public class DefaultApiRequestTest {
     }
 
     @Test
-    void rosterPlayers() throws Exception {
-        runTest(api().rosterPlayers().season(2017).onDate(NOV_22_2017).team().add("min", "chi"), ROSTER_PLAYERS);
+    void cumulativePlayerStats() throws Exception {
+        CumulativePlayerStatsBuilder builder = api()
+                .cumulativePlayerStats()
+                .season(2017)
+                .leagueType(REGULAR)
+                .team().add(MINNESOTA);
+        runTest(builder, CUMULATIVE_PLAYER_STATS);
     }
 
     @Test
-    void scoreboard() throws Exception {
-        runTest(api().scoreboard().season(2017).forDate(NOV_22_2017), SCOREBOARD);
+    void fullGameSchedule() throws Exception {
+        FullGameScheduleBuilder builder = api()
+                .fullGameSchedule()
+                .season(2017)
+                .leagueType(REGULAR)
+                .date()
+                .onDate(NOV_22_2017)
+                .team()
+                .add(MINNESOTA, CHICAGO);
+        runTest(builder, FULL_GAME_SCHEDULE);
+    }
+
+    @Test
+    void dailyGameSchedule() throws Exception {
+        DailyGameScheduleBuilder builder = api().dailyGameSchedule()
+                .onDate(NOV_22_2017)
+                .team().add(MINNESOTA, CHICAGO);
+        runTest(builder, DAILY_GAME_SCHEDULE);
     }
 
     @Test
@@ -63,56 +94,118 @@ public class DefaultApiRequestTest {
     }
 
     @Test
-    void fullGameSchedule() throws Exception {
-        FullGameScheduleBuilder builder = api()
-                .fullGameSchedule()
-                .season(2017)
-                .leagueType(REGULAR)
-                .date()
-                .onDate(NOV_22_2017)
-                .team()
-                .add("min", "chi");
-        runTest(builder, FULL_GAME_SCHEDULE);
+    void gameBoxScore() throws Exception {
+        GameBoxScoreBuilder builder = api().gameBoxScore()
+                .gameId()
+                .forGame(NOV_22_2017, MINNESOTA, BUFFALO);
+        runTest(builder, GAME_BOX_SCORE);
     }
 
     @Test
-    void cumulativePlayerStats() throws Exception {
-        CumulativePlayerStatsBuilder builder = api()
-                .cumulativePlayerStats()
-                .season(2017)
-                .leagueType(REGULAR)
-                .team().add("min");
-        runTest(builder, CUMULATIVE_PLAYER_STATS);
-    }
-
-    @Test
-    void currentSeason() throws Exception {
-        CurrentSeasonBuilder builder = api().currentSeason();
-        runTest(builder, CURRENT_SEASON);
-    }
-
-    @Test
-    void dailyGameSchedule() throws Exception {
-        DailyGameScheduleBuilder builder = api().dailyGameSchedule()
-                .onDate(NOV_22_2017)
-                .team().add("min", "chi");
-        runTest(builder, DAILY_GAME_SCHEDULE);
+    void scoreboard() throws Exception {
+        runTest(api().scoreboard().season(2017).forDate(NOV_22_2017), SCOREBOARD);
     }
 
     @Test
     void gamePlayByPlay() throws Exception {
         GamePlayByPlayBuilder builder = api().gamePlayByPlay()
                 .gameId()
-                .forGame(NOV_22_2017, "min", "buf");
+                .forGame(NOV_22_2017, MINNESOTA, BUFFALO);
         runTest(builder, GAME_PLAY_BY_PLAY);
     }
 
     @Test
-    void gameBoxScore() throws Exception {
-        GameBoxScoreBuilder builder = api().gameBoxScore()
-                .gameId()
-                .forGame(NOV_22_2017, "min", "buf");
-        runTest(builder, GAME_BOX_SCORE);
+    void rosterPlayers() throws Exception {
+        runTest(api().rosterPlayers().season(2017).onDate(NOV_22_2017).team().add(MINNESOTA, CHICAGO), ROSTER_PLAYERS);
+    }
+
+    @Test
+    void gameStartingLineup() throws Exception {
+        runTest(api()
+                        .startingLineup()
+                        .actualLineup()
+                        .gameId()
+                        .forGame(NOV_22_2017, MINNESOTA, BUFFALO)
+                , GAME_STARTING_LINEUP);
+    }
+
+    @Test
+    void playerGameLogs() throws Exception {
+        PlayerGameLogsBuilder builder = api()
+                .playerGameLogs()
+                .games()
+                .add(NOV_22_2017, MINNESOTA, BUFFALO)
+                .builder();
+        runTest(builder, PLAYER_GAME_LOGS);
+
+    }
+
+    @Test
+    void teamGameLogs() throws Exception {
+        TeamGameLogsBuilder builder = api()
+                .teamGameLogs()
+                .games()
+                .add(NOV_22_2017, MINNESOTA, BUFFALO)
+                .builder();
+        runTest(builder, TEAM_GAME_LOGS);
+
+    }
+
+    @Test
+    void overallTeamStandings() throws Exception {
+        OverallTeamStandingsBuilder builder = api()
+                .overallTeamStandings()
+                .teams().add(MINNESOTA)
+                .season(2017);
+        runTest(builder, "overallteamstandings");
+    }
+
+    @Test
+    void divisionTeamStandings() throws Exception {
+        DivisionTeamStandingsBuilder builder = api()
+                .divisionTeamStandings()
+                .teams().add(MINNESOTA)
+                .season(2017);
+        runTest(builder, "divisionteamstandings");
+    }
+
+    @Test
+    void conferenceTeamStandings() throws Exception {
+        ConferenceTeamStandingsBuilder builder = api()
+                .conferenceTeamStandings()
+                .teams().add(MINNESOTA)
+                .season(2017);
+        runTest(builder, "conferenceteamstandings");
+    }
+
+    @Test
+    void playoffTeamStandings() throws Exception {
+        PlayoffTeamStandingsBuilder builder = api()
+                .playoffTeamStandings()
+                .teams().add(MINNESOTA)
+                .season(2017);
+        runTest(builder, "playoffteamstandings");
+    }
+
+
+    @Test
+    void currentSeason() throws Exception {
+        CurrentSeasonBuilder builder = api().currentSeason().forDate(NOV_22_2017);
+        runTest(builder, CURRENT_SEASON);
+    }
+
+    @Test
+    void latestUpdate() throws Exception {
+        runTest(api().latestUpdates(), LATEST_UPDATES);
+    }
+
+    @Test
+    void dailyFantasy() throws Exception {
+        runTest(api()
+                .dailyFantasyLeague()
+                .fantasyLeagues()
+                .add(DailyFantasyLeague.DRAFT_KINGS)
+                .onDate(NOV_22_2017), DAILY_DFS);
     }
 
     private void assertResponse(JsonNode response, String firstChild) {
@@ -121,7 +214,7 @@ public class DefaultApiRequestTest {
 
     private void assertResponse(JsonNode response, String firstChild, JsonNodeType type) {
         assertThat(response)
-                .child(firstChild).child("lastUpdatedOn").isNodeType(type);
+                .child(firstChild).child(LAST_UPDATED_ON).isNodeType(type);
     }
 
     private void runTest(RequestBuilder<?> builder, String firstChild) throws Exception {

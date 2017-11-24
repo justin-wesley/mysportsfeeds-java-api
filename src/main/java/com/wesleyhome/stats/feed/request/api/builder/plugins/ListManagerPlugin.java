@@ -6,7 +6,7 @@ import com.wesleyhome.stats.feed.request.api.builder.RequestBuilder;
 
 public class ListManagerPlugin<B extends RequestBuilder<B>, T> implements RequestBuilderPlugin {
 
-    private final B builder;
+    protected final B builder;
     private final String parameterName;
     private ListManagerBuilder<T> list = new ListManagerBuilder<>();
 

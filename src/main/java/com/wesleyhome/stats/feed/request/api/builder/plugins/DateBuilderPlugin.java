@@ -5,7 +5,6 @@ import com.wesleyhome.stats.feed.request.api.TimeUnit;
 import com.wesleyhome.stats.feed.request.api.builder.DefaultApiRequest;
 import com.wesleyhome.stats.feed.request.api.builder.RequestBuilder;
 
-import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
 
 public class DateBuilderPlugin<B extends RequestBuilder<B>> implements RequestBuilderPlugin {
@@ -17,7 +16,6 @@ public class DateBuilderPlugin<B extends RequestBuilder<B>> implements RequestBu
     public DateBuilderPlugin(B builder, String parameterName) {
         this.builder = builder;
         this.parameterName = parameterName;
-        onDate(LocalDate.now());
     }
 
     public DateBuilderPlugin(B builder) {

@@ -172,8 +172,12 @@ public class DefaultApiRequest implements ApiRequest {
     }
 
     private DefaultApiRequest applyParameters(String listName, Stream<?> stream) {
-        String value = stream.map(Object::toString).reduce((v1, v2) -> String.format("%s,%s", v1, v2)).orElse(null);
+        String value = stream.map(this::toStringValue).reduce((v1, v2) -> String.format("%s,%s", v1, v2)).orElse(null);
         return applyParameter(listName, value);
+    }
+
+    private String toStringValue(Object o) {
+        return o instanceof ValueTransformer ? ((ValueTransformer) o).toStringValue() : o.toString();
     }
 
     public DefaultApiRequest applyParameter(String name, Object value) {
