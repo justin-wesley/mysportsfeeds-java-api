@@ -4,6 +4,8 @@ import com.wesleyhome.stats.feed.request.api.*;
 import com.wesleyhome.stats.feed.request.rest.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -100,12 +102,16 @@ public class DefaultApiRequest implements ApiRequest {
     }
 
     protected <R> R sendRequest(Class<R> responseType, String feedUri, String rootUri) {
-        ResponseEntity<R> responseEntity = new RestTemplateBuilder()
-                .basicAuthorization(credentials.getUsername(), credentials.getPassword())
-                .rootUri(rootUri)
-                .build()
-                .exchange(feedUri, HttpMethod.GET, null, responseType);
-        return responseEntity.getBody();
+        try {
+            ResponseEntity<R> responseEntity = new RestTemplateBuilder()
+                    .basicAuthorization(credentials.getUsername(), credentials.getPassword())
+                    .rootUri(rootUri)
+                    .build()
+                    .exchange(feedUri, HttpMethod.GET, null, responseType);
+            return responseEntity.getBody();
+        } catch (HttpClientErrorException e) {
+            throw new RestClientException("Unable to retrieve " + rootUri + feedUri, e);
+        }
     }
 
     private String getFeedName() {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.wesleyhome.stats.feed.request.api.ApiCredentials;
 import com.wesleyhome.stats.feed.request.api.DailyFantasyLeague;
+import com.wesleyhome.stats.feed.request.api.LeagueType;
 import com.wesleyhome.stats.feed.request.api.credentials.ResourceBundleCredentials;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,12 +41,12 @@ public class DefaultApiRequestTest {
     private static final LocalDate NOV_22_2017 = LocalDate.of(2017, Month.NOVEMBER, 22);
 
     @BeforeAll
-    static void classSetup() throws Exception {
+    static void classSetup() {
         DefaultApiRequest.disableSslVerification(); // setup SSL resolver
     }
 
     @BeforeEach
-    void testSetup() throws Exception {
+    void testSetup() {
         this.apiCredentials = new ResourceBundleCredentials(APPLICATION);
     }
 
@@ -96,6 +97,8 @@ public class DefaultApiRequestTest {
     @Test
     void gameBoxScore() throws Exception {
         GameBoxScoreBuilder builder = api().gameBoxScore()
+                .leagueType(LeagueType.REGULAR)
+                .season(2017)
                 .gameId()
                 .forGame(NOV_22_2017, MINNESOTA, BUFFALO);
         runTest(builder, GAME_BOX_SCORE);
@@ -109,6 +112,8 @@ public class DefaultApiRequestTest {
     @Test
     void gamePlayByPlay() throws Exception {
         GamePlayByPlayBuilder builder = api().gamePlayByPlay()
+                .leagueType(LeagueType.REGULAR)
+                .season(2017)
                 .gameId()
                 .forGame(NOV_22_2017, MINNESOTA, BUFFALO);
         runTest(builder, GAME_PLAY_BY_PLAY);
@@ -124,6 +129,8 @@ public class DefaultApiRequestTest {
         runTest(api()
                         .startingLineup()
                         .actualLineup()
+                        .leagueType(LeagueType.REGULAR)
+                        .season(2017)
                         .gameId()
                         .forGame(NOV_22_2017, MINNESOTA, BUFFALO)
                 , GAME_STARTING_LINEUP);
@@ -217,12 +224,12 @@ public class DefaultApiRequestTest {
                 .child(firstChild).child(LAST_UPDATED_ON).isNodeType(type);
     }
 
-    private void runTest(RequestBuilder<?> builder, String firstChild) throws Exception {
+    private void runTest(RequestBuilder<?> builder, String firstChild) {
         JsonNode request = builder.request(JsonNode.class);
         assertResponse(request, firstChild);
     }
 
-    private void runTest(RequestBuilder<?> builder, String firstChild, JsonNodeType type) throws Exception {
+    private void runTest(RequestBuilder<?> builder, String firstChild, JsonNodeType type) {
         JsonNode request = builder.request(JsonNode.class);
         assertResponse(request, firstChild, type);
     }
