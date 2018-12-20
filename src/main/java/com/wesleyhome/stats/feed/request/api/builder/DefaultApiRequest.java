@@ -8,16 +8,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +23,6 @@ import static java.lang.String.format;
 public class DefaultApiRequest implements ApiRequest {
 
     public static final String ROOT_URI = "https://api.mysportsfeeds.com/v1.1/pull";
-    private static boolean classSetup = false;
     private final OkHttpClient httpClient;
     private final ObjectMapper mapper;
     private ApiCredentials credentials;
@@ -60,42 +52,6 @@ public class DefaultApiRequest implements ApiRequest {
         mapper = new ObjectMapper()
             .registerModule(new JavaTimeModule());
 
-    }
-
-
-    static {
-//        disableSslVerification();
-    }
-
-    static void disableSslVerification() {
-        if (!classSetup) {
-            try {
-                // Create a trust manager that does not validate certificate chains
-                TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
-
-                    public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                    }
-
-                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                    }
-                }
-                };
-
-                // Install the all-trusting trust manager
-                SSLContext sc = SSLContext.getInstance("SSL");
-                sc.init(null, trustAllCerts, new java.security.SecureRandom());
-                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-                // Install the all-trusting host verifier
-                HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
-                classSetup = true;
-            } catch (NoSuchAlgorithmException | KeyManagementException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     protected boolean hasSeason() {
