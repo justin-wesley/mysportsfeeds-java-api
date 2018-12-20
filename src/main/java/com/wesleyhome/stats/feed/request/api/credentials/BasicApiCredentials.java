@@ -13,7 +13,7 @@ public class BasicApiCredentials implements ApiCredentials {
     }
 
     @Override
-    public String getUsername() {
+    public String getApiToken() {
         return username;
     }
 

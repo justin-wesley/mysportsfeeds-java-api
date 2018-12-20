@@ -16,7 +16,7 @@ public class ResourceBundleCredentials implements ApiCredentials {
     }
 
     @Override
-    public String getUsername() {
+    public String getApiToken() {
         return username;
     }
 

@@ -1,22 +1,27 @@
 package com.wesleyhome.stats.feed.request.api.builder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.wesleyhome.stats.feed.request.api.*;
-import com.wesleyhome.stats.feed.request.rest.RestTemplateBuilder;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
+import okhttp3.Credentials;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -26,17 +31,23 @@ public class DefaultApiRequest implements ApiRequest {
 
     public static final String ROOT_URI = "https://api.mysportsfeeds.com/v1.1/pull";
     private static boolean classSetup = false;
+    private final OkHttpClient httpClient;
+    private final ObjectMapper mapper;
     private ApiCredentials credentials;
     private String feedName;
-    //    private Class<R> responseType;
     private LeagueType leagueType;
     private League league;
     private Season season;
     private Integer startYear;
     private Map<String, String> parameters;
 
-    DefaultApiRequest(ApiCredentials credentials, String feedName, League league,
-                      Integer startYear, Season season, LeagueType leagueType) {
+    DefaultApiRequest(
+        ApiCredentials credentials,
+        String feedName,
+        League league,
+        Integer startYear,
+        Season season,
+        LeagueType leagueType) {
         this.credentials = credentials;
         this.feedName = feedName;
         this.leagueType = leagueType;
@@ -44,11 +55,16 @@ public class DefaultApiRequest implements ApiRequest {
         this.startYear = startYear;
         this.season = season;
         this.parameters = new LinkedHashMap<>();
+        httpClient = new OkHttpClient.Builder()
+            .build();
+        mapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
+
     }
 
 
     static {
-        disableSslVerification();
+//        disableSslVerification();
     }
 
     static void disableSslVerification() {
@@ -88,14 +104,13 @@ public class DefaultApiRequest implements ApiRequest {
 
     @Override
     public <R> R sendRequest(Class<R> responseType) {
-        String feedUri = hasSeason() ? format("/%s/%s/%s.json", getLeague(), getSeason(), getFeedName()) : format("/%s/%s.json", getLeague(), getFeedName());
+        String feedUri = hasSeason() ? format("%s/%s/%s.json", getLeague(), getSeason(), getFeedName()) : format("/%s/%s.json", getLeague(), getFeedName());
         if (hasParameters()) {
-            feedUri += "?" + getParameters().entrySet().stream()
+            feedUri += "?" +
+                getParameters().entrySet().stream()
                     .map(e -> format("%s=%s", e.getKey(), e.getValue()))
-                    .reduce((p1, p2) -> format("%s&%s", p1, p2))
-                    .orElse("");
+                    .collect(Collectors.joining("&"));
         }
-//            URL url = new URL(ROOT_URI + feedUri);
         String rootUri = ROOT_URI;
         return sendRequest(responseType, feedUri, rootUri);
 
@@ -103,14 +118,24 @@ public class DefaultApiRequest implements ApiRequest {
 
     protected <R> R sendRequest(Class<R> responseType, String feedUri, String rootUri) {
         try {
-            ResponseEntity<R> responseEntity = new RestTemplateBuilder()
-                    .basicAuthorization(credentials.getUsername(), credentials.getPassword())
-                    .rootUri(rootUri)
+            String basic = Credentials.basic(credentials.getApiToken(), credentials.getPassword());
+            Response response = httpClient.newCall(
+                new Request.Builder()
+                    .url(format("%s/%s", rootUri, feedUri))
+                    .addHeader("Authorization", basic)
                     .build()
-                    .exchange(feedUri, HttpMethod.GET, null, responseType);
-            return responseEntity.getBody();
-        } catch (HttpClientErrorException e) {
-            throw new RestClientException("Unable to retrieve " + rootUri + feedUri, e);
+            )
+                .execute();
+            if(response.isSuccessful()) {
+                try (InputStream is = response.body().byteStream()) {
+                    return mapper.readerFor(responseType).readValue(is);
+                }
+            } else {
+                String message = response.message();
+                throw new IOException(message);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -133,10 +158,10 @@ public class DefaultApiRequest implements ApiRequest {
         }
         boolean multiYear = league.isMultiYear();
         return startYear == null ?
-                defaultSeason :
-                multiYear ?
-                        format("%s-%s-%s", startYear, startYear + 1, leagueType) :
-                        format("%s-%s", startYear, leagueType);
+            defaultSeason :
+            multiYear ?
+                format("%s-%s-%s", startYear, startYear + 1, leagueType) :
+                format("%s-%s", startYear, leagueType);
     }
 
     private League getLeague() {
