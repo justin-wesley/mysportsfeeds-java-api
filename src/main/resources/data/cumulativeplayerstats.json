@@ -1,0 +1,263 @@
+{
+  "cumulativeplayerstats": {
+    "lastUpdatedOn": "2016-12-19 12:32:56 AM",
+    "playerstatsentry": [
+      {
+        "player": {
+          "ID": "143",
+          "LastName": "Jagr",
+          "FirstName": "Jaromir",
+          "JerseyNumber": "68",
+          "Position": "RW",
+          "Height": "6'3\"",
+          "Weight": "230",
+          "BirthDate": "1972-02-15",
+          "Age": "44",
+          "BirthCity": "Kladno",
+          "BirthCountry": "Czechoslovakia",
+          "IsRookie": "false"
+        },
+        "team": {
+          "ID": "4",
+          "City": "Florida",
+          "Name": "Panthers",
+          "Abbreviation": "FLO"
+        },
+        "stats": {
+          "GamesPlayed": {
+            "@abbreviation": "GP",
+            "#text": "10"
+          },
+          "stats": {
+            "Goals": {
+              "@abbreviation": "G",
+              "#text": "4"
+            },
+            "Assists": {
+              "@abbreviation": "A",
+              "#text": "4"
+            },
+            "Points": {
+              "@abbreviation": "Pts",
+              "#text": "8"
+            },
+            "HatTricks": {
+              "@abbreviation": "Hat",
+              "#text": "0"
+            },
+            "PlusMinus": {
+              "@abbreviation": "+/-",
+              "#text": "-4"
+            },
+            "Shots": {
+              "@abbreviation": "Sh",
+              "#text": "35"
+            },
+            "ShotPercentage": {
+              "@abbreviation": "Sh%",
+              "#text": "11.4"
+            },
+            "Penalties": {
+              "@abbreviation": "Pn",
+              "#text": "5"
+            },
+            "PenaltyMinutes": {
+              "@abbreviation": "PIM",
+              "#text": "13"
+            },
+            "PowerplayGoals": {
+              "@abbreviation": "PPG",
+              "#text": "2"
+            },
+            "PowerplayAssists": {
+              "@abbreviation": "PPA",
+              "#text": "0"
+            },
+            "PowerplayPoints": {
+              "@abbreviation": "PPPts",
+              "#text": "2"
+            },
+            "ShorthandedGoals": {
+              "@abbreviation": "SHG",
+              "#text": "0"
+            },
+            "ShorthandedAssists": {
+              "@abbreviation": "SHA",
+              "#text": "1"
+            },
+            "ShorthandedPoints": {
+              "@abbreviation": "SHPts",
+              "#text": "1"
+            },
+            "GameWinningGoals": {
+              "@abbreviation": "GWG",
+              "#text": "0"
+            },
+            "GameTyingGoals": {
+              "@abbreviation": "GTG",
+              "#text": "0"
+            },
+            "Hits": {
+              "@abbreviation": "Ht",
+              "#text": "52"
+            },
+            "Faceoffs": {
+              "@abbreviation": "FO",
+              "#text": "4"
+            },
+            "FaceoffWins": {
+              "@abbreviation": "F/O W",
+              "#text": "0"
+            },
+            "FaceoffLosses": {
+              "@abbreviation": "F/O L",
+              "#text": "4"
+            },
+            "FaceoffPercent": {
+              "@abbreviation": "F/O %",
+              "#text": "000.0"
+            }
+          }
+        }
+      },
+      {
+        "player": {
+          "ID": "3647",
+          "LastName": "Lundqvist",
+          "FirstName": "Henrik",
+          "JerseyNumber": "30",
+          "Position": "G",
+          "Height": "6'1\"",
+          "Weight": "188",
+          "BirthDate": "1982-03-02",
+          "Age": "34",
+          "BirthCity": "Are",
+          "BirthCountry": "Sweden",
+          "IsRookie": "false"
+        },
+        "team": {
+          "ID": "9",
+          "City": "New York",
+          "Name": "Rangers",
+          "Abbreviation": "NYR"
+        },
+        "stats": {
+          "GamesPlayed": {
+            "@abbreviation": "GP",
+            "#text": "25"
+          },
+          "stats": {
+            "Goals": {
+              "@abbreviation": "G",
+              "#text": "0"
+            },
+            "Assists": {
+              "@abbreviation": "A",
+              "#text": "1"
+            },
+            "Points": {
+              "@abbreviation": "Pts",
+              "#text": "1"
+            },
+            "HatTricks": {
+              "@abbreviation": "Hat",
+              "#text": "0"
+            },
+            "Penalties": {
+              "@abbreviation": "Pn",
+              "#text": "0"
+            },
+            "PenaltyMinutes": {
+              "@abbreviation": "PIM",
+              "#text": "0"
+            },
+            "PowerplayGoals": {
+              "@abbreviation": "PPG",
+              "#text": "0"
+            },
+            "PowerplayAssists": {
+              "@abbreviation": "PPA",
+              "#text": "0"
+            },
+            "PowerplayPoints": {
+              "@abbreviation": "PPPts",
+              "#text": "0"
+            },
+            "ShorthandedGoals": {
+              "@abbreviation": "SHG",
+              "#text": "0"
+            },
+            "ShorthandedAssists": {
+              "@abbreviation": "SHA",
+              "#text": "0"
+            },
+            "ShorthandedPoints": {
+              "@abbreviation": "SHPts",
+              "#text": "0"
+            },
+            "GameWinningGoals": {
+              "@abbreviation": "GWG",
+              "#text": "0"
+            },
+            "GameTyingGoals": {
+              "@abbreviation": "GTG",
+              "#text": "0"
+            },
+            "Wins": {
+              "@abbreviation": "W",
+              "#text": "15"
+            },
+            "Losses": {
+              "@abbreviation": "L",
+              "#text": "8"
+            },
+            "OvertimeWins": {
+              "@abbreviation": "OTW",
+              "#text": "0"
+            },
+            "OvertimeLosses": {
+              "@abbreviation": "OTL",
+              "#text": "1"
+            },
+            "GoalsAgainst": {
+              "@abbreviation": "GA",
+              "#text": "53"
+            },
+            "ShotsAgainst": {
+              "@abbreviation": "SA",
+              "#text": "660"
+            },
+            "Saves": {
+              "@abbreviation": "Sv",
+              "#text": "607"
+            },
+            "GoalsAgainstAverage": {
+              "@abbreviation": "GAA",
+              "#text": "2.299"
+            },
+            "SavePercentage": {
+              "@abbreviation": "Sv%",
+              "#text": "0.920"
+            },
+            "Shutouts": {
+              "@abbreviation": "SO",
+              "#text": "1"
+            },
+            "GamesStarted": {
+              "@abbreviation": "GS",
+              "#text": "23"
+            },
+            "CreditForGame": {
+              "@abbreviation": "CrG",
+              "#text": "24"
+            },
+            "MinutesPlayed": {
+              "@abbreviation": "MIN",
+              "#text": "1383"
+            }
+          }
+        }
+      }
+    ]
+  }
+}
