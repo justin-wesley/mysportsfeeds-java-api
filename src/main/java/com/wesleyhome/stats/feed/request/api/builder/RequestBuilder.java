@@ -65,6 +65,10 @@ public abstract class RequestBuilder<B extends RequestBuilder<B>> {
         return this.league;
     }
 
+    public String getFeedName() {
+        return feedName;
+    }
+
     public final <R> R request(Class<R> responseType) {
         DefaultApiRequest request = new DefaultApiRequest(this.credentials, this.feedName, this.league, this.startYear, this.season, this.leagueType);
         plugins.forEach(plugin -> plugin.buildRequest(request));

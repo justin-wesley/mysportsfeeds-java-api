@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.wesleyhome.stats.feed.request.api.ApiCredentials;
 import com.wesleyhome.stats.feed.request.api.DailyFantasyLeague;
 import com.wesleyhome.stats.feed.request.api.LeagueType;
-import com.wesleyhome.stats.feed.request.api.credentials.EnvironmentCredentials;
 import com.wesleyhome.stats.feed.request.api.credentials.ResourceBundleCredentials;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +47,7 @@ public class DefaultApiRequestTest {
 
     @BeforeEach
     void testSetup() {
-        this.apiCredentials = new EnvironmentCredentials();
+        this.apiCredentials = new ResourceBundleCredentials("application");
     }
 
     private StatsApi api() {

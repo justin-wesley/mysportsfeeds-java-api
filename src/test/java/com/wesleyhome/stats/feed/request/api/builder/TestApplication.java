@@ -1,10 +1,11 @@
-package com.wesleyhome.stats.feed;
+package com.wesleyhome.stats.feed.request.api.builder;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.CaseFormat;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JFieldVar;
-import com.sun.codemodel.JPackage;
+import com.wesleyhome.stats.feed.request.api.credentials.ResourceBundleCredentials;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +16,10 @@ import org.jsonschema2pojo.*;
 import org.jsonschema2pojo.rules.RuleFactory;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.UncheckedIOException;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,17 +28,71 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static com.wesleyhome.stats.feed.MySportsFeedAPI.nhl;
+
 public class TestApplication {
 
     public static void main(String[] args) throws Exception {
-        new TestApplication().generate("cumulativeplayerstats");
+        TestApplication testApplication = new TestApplication();
+        testApplication.generate();
     }
 
-    private void generate(String name) throws IOException {
+    private void generate() {
         JCodeModel codeModel = new JCodeModel();
+        ResourceBundleCredentials credentials = new ResourceBundleCredentials("application");
+        StatsApi api = nhl(credentials);
+        Stream<RequestBuilder<? extends RequestBuilder<?>>> stream = Stream.of(
+                api.conferenceTeamStandings(),
+                api.currentSeason().forDate(LocalDate.of(2018, Month.DECEMBER, 20)),
+                api.cumulativePlayerStats(),
+                api.dailyFantasyLeague(),
+                api.dailyGameSchedule(),
+                api.divisionTeamStandings(),
+                api.fullGameSchedule().team().add("min"),
+                api.gameBoxScore().gameId().forGame(LocalDate.of(2018, Month.DECEMBER, 18), "sjs", "min"),
+                api.gamePlayByPlay().gameId().forGame(LocalDate.of(2018, Month.DECEMBER, 18), "sjs", "min"),
+                api.latestUpdates(),
+                api.overallTeamStandings().teams().add("min"),
+                api.playerGameLogs().teams().add("min"),
+                api.rosterPlayers().team().add("min"),
+                api.scoreboard().forDate(LocalDate.of(2018, Month.DECEMBER, 19)),
+                api.startingLineup().gameId().forGame(LocalDate.of(2018, Month.DECEMBER, 18), "sjs", "min"),
+                api.teamGameLogs().teams().add("min")
+        );
+        stream.parallel().forEach(rb -> {
+            generate(codeModel, rb);
+        });
+        Map<FieldClass, List<JDefinedClass>> classMappings = stream(codeModel.packages())
+                .flatMap(p -> stream(p.classes()))
+                .collect(Collectors.groupingBy(FieldClass::new));
+        classMappings.forEach(((fieldClass, jDefinedClasses) -> {
 
-        URL source = TestApplication.class.getResource("/data/" + name + ".json");
+        }));
+        stream(codeModel.packages())
+                .forEach(p -> stream(p.classes())
+                        .forEach(cls -> {
+                            cls.annotate(Data.class);
+                            cls.annotate(AllArgsConstructor.class);
+                            cls.annotate(NoArgsConstructor.class);
+                            cls.annotate(Builder.class);
+                            cls.fields().values()
+                                    .forEach(field -> {
+                                        field.mods().setPrivate();
+                                    });
+                        }));
 
+        try {
+            codeModel.build(Paths.get("src", "main", "java").toFile());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+    }
+
+    private <R extends RequestBuilder<B>, B extends RequestBuilder<B>> void generate(JCodeModel codeModel, R builder) {
+        String name = builder.getFeedName();
+        JsonNode response = builder.request(JsonNode.class);
+        String json = response.toString();
         GenerationConfig config = new DefaultGenerationConfig() {
             @Override
             public boolean isGenerateBuilders() { // set config option by overriding method
@@ -80,26 +137,12 @@ public class TestApplication {
         };
         String packageName = "com.wesleyhome.stats.feed.request.api.model." + name;
         SchemaMapper mapper = new SchemaMapper(new RuleFactory(config, new Jackson2Annotator(config), new SchemaStore()), new SchemaGenerator());
-        String className = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name);
-        mapper.generate(codeModel, className, packageName, source);
-        Map<FieldClass, List<JDefinedClass>> classMappings = stream(codeModel.packages())
-                .flatMap(p -> stream(p.classes()))
-                .collect(Collectors.groupingBy(FieldClass::new));
-        classMappings.forEach(((fieldClass, jDefinedClasses) -> {
-
-        }));
-        stream(codeModel.packages())
-                .forEach(p -> stream(p.classes())
-                        .forEach(cls -> {
-                            cls.annotate(Data.class);
-                            cls.annotate(AllArgsConstructor.class);
-                            cls.annotate(NoArgsConstructor.class);
-                            cls.annotate(Builder.class);
-
-                        }));
-
-        Iterator<JPackage> packages = codeModel.packages();
-        codeModel.build(Paths.get("src", "main", "java").toFile());
+        String className = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name);
+        try {
+            mapper.generate(codeModel, className, packageName, json);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
 
     }
 

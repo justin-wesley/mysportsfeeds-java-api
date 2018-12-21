@@ -1,9 +1,9 @@
 package com.wesleyhome.stats.feed.request.api;
 
-//import com.wesleyhome.stats.feed.request.api.builder.MLB;
-//import com.wesleyhome.stats.feed.request.api.builder.NBA;
-//import com.wesleyhome.stats.feed.request.api.builder.NFL;
-//import com.wesleyhome.stats.feed.request.api.builder.NHL;
+//import com.wesleyhome.statsRoot.feed.request.api.builder.MLB;
+//import com.wesleyhome.statsRoot.feed.request.api.builder.NBA;
+//import com.wesleyhome.statsRoot.feed.request.api.builder.NFL;
+//import com.wesleyhome.statsRoot.feed.request.api.builder.NHL;
 
 public interface League {
 

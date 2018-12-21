@@ -7,6 +7,7 @@ import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +15,7 @@ import java.io.UncheckedIOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -34,12 +36,12 @@ public class DefaultApiRequest implements ApiRequest {
     private Map<String, String> parameters;
 
     DefaultApiRequest(
-        ApiCredentials credentials,
-        String feedName,
-        League league,
-        Integer startYear,
-        Season season,
-        LeagueType leagueType) {
+            ApiCredentials credentials,
+            String feedName,
+            League league,
+            Integer startYear,
+            Season season,
+            LeagueType leagueType) {
         this.credentials = credentials;
         this.feedName = feedName;
         this.leagueType = leagueType;
@@ -47,10 +49,16 @@ public class DefaultApiRequest implements ApiRequest {
         this.startYear = startYear;
         this.season = season;
         this.parameters = new LinkedHashMap<>();
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+
         httpClient = new OkHttpClient.Builder()
-            .build();
+                .addInterceptor(loggingInterceptor)
+                .connectTimeout(5, java.util.concurrent.TimeUnit.MINUTES)
+                .readTimeout(5, TimeUnit.MINUTES)
+                .build();
         mapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule());
+                .registerModule(new JavaTimeModule());
 
     }
 
@@ -63,32 +71,40 @@ public class DefaultApiRequest implements ApiRequest {
         String feedUri = hasSeason() ? format("%s/%s/%s.json", getLeague(), getSeason(), getFeedName()) : format("/%s/%s.json", getLeague(), getFeedName());
         if (hasParameters()) {
             feedUri += "?" +
-                getParameters().entrySet().stream()
-                    .map(e -> format("%s=%s", e.getKey(), e.getValue()))
-                    .collect(Collectors.joining("&"));
+                    getParameters().entrySet().stream()
+                            .map(e -> format("%s=%s", e.getKey(), e.getValue()))
+                            .collect(Collectors.joining("&"));
         }
         String rootUri = ROOT_URI;
         return sendRequest(responseType, feedUri, rootUri);
 
     }
 
-    protected <R> R sendRequest(Class<R> responseType, String feedUri, String rootUri) {
+    private <R> R sendRequest(Class<R> responseType, String feedUri, String rootUri) {
+        return sendRequest(responseType, feedUri, rootUri, true);
+    }
+
+    private <R> R sendRequest(Class<R> responseType, String feedUri, String rootUri, boolean retryOnFailure) {
         try {
             String basic = Credentials.basic(credentials.getApiToken(), credentials.getPassword());
             Response response = httpClient.newCall(
-                new Request.Builder()
-                    .url(format("%s/%s", rootUri, feedUri))
-                    .addHeader("Authorization", basic)
-                    .build()
+                    new Request.Builder()
+                            .url(format("%s/%s", rootUri, feedUri))
+                            .addHeader("Authorization", basic)
+                            .build()
             )
-                .execute();
-            if(response.isSuccessful()) {
+                    .execute();
+            if (response.isSuccessful()) {
                 try (InputStream is = response.body().byteStream()) {
                     return mapper.readerFor(responseType).readValue(is);
                 }
             } else {
+                if (retryOnFailure) {
+                    return sendRequest(responseType, feedUri, rootUri, false);
+                }
                 String message = response.message();
-                throw new IOException(message);
+                int code = response.code();
+                throw new IOException("Code: " + code + " - " + message + " URL: " + feedUri);
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -114,10 +130,10 @@ public class DefaultApiRequest implements ApiRequest {
         }
         boolean multiYear = league.isMultiYear();
         return startYear == null ?
-            defaultSeason :
-            multiYear ?
-                format("%s-%s-%s", startYear, startYear + 1, leagueType) :
-                format("%s-%s", startYear, leagueType);
+                defaultSeason :
+                multiYear ?
+                        format("%s-%s-%s", startYear, startYear + 1, leagueType) :
+                        format("%s-%s", startYear, leagueType);
     }
 
     private League getLeague() {
