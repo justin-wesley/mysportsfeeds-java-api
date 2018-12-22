@@ -65,9 +65,6 @@ public class TestApplication {
         Map<FieldClass, List<JDefinedClass>> classMappings = stream(codeModel.packages())
                 .flatMap(p -> stream(p.classes()))
                 .collect(Collectors.groupingBy(FieldClass::new));
-        classMappings.forEach(((fieldClass, jDefinedClasses) -> {
-
-        }));
         stream(codeModel.packages())
                 .forEach(p -> stream(p.classes())
                         .forEach(cls -> {
